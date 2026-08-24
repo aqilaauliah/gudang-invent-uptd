@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import { LogIn, Mail, Lock } from 'lucide-react';
 import GuestLayout from '@/Layouts/GuestLayout';
 import Button from '@/Components/Button';
 
-export default function Login({ status }) {
+export default function Login({ status, canResetPassword }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         email: '',
         password: '',
@@ -87,15 +87,25 @@ export default function Login({ status }) {
                         {errors.password && <p className="mt-1.5 text-xs text-danger">{errors.password}</p>}
                     </div>
 
-                    <label className="flex items-center gap-2.5 text-sm text-muted">
-                        <input
-                            type="checkbox"
-                            checked={data.remember}
-                            onChange={(e) => setData('remember', e.target.checked)}
-                            className="h-4 w-4 rounded border-line text-primary focus:ring-primary"
-                        />
-                        Ingat saya
-                    </label>
+                    <div className="flex items-center justify-between gap-3">
+                        <label className="flex items-center gap-2.5 text-sm text-muted">
+                            <input
+                                type="checkbox"
+                                checked={data.remember}
+                                onChange={(e) => setData('remember', e.target.checked)}
+                                className="h-4 w-4 rounded border-line text-primary focus:ring-primary"
+                            />
+                            Ingat saya
+                        </label>
+                        {canResetPassword && (
+                            <Link
+                                href={route('password.request')}
+                                className="text-sm font-medium text-primary hover:underline"
+                            >
+                                Lupa password?
+                            </Link>
+                        )}
+                    </div>
 
                     <Button type="submit" disabled={processing} className="w-full" size="lg">
                         <LogIn className="h-4 w-4" />
