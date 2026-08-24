@@ -19,6 +19,7 @@ export default function Button({
     variant = 'primary',
     size = 'md',
     href,
+    external = false,
     className = '',
     type = 'button',
     children,
@@ -30,6 +31,14 @@ export default function Button({
         sizes[size],
         className,
     ].join(' ');
+
+    if (href && external) {
+        return (
+            <a href={href} className={classes} {...props}>
+                {children}
+            </a>
+        );
+    }
 
     if (href) {
         return (

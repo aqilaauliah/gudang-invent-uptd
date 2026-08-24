@@ -38,8 +38,14 @@ class ReportController extends Controller
     private function buildReportData(Request $request): array
     {
         $type = $request->string('type', 'persediaan')->toString();
-        $dari = $request->input('dari') ?: now()->startOfMonth()->toDateString();
-        $sampai = $request->input('sampai') ?: now()->endOfMonth()->toDateString();
+
+        $tahun = (int) $request->input('tahun', now()->year);
+        if ($tahun < 2000 || $tahun > 9999) {
+            $tahun = (int) now()->year;
+        }
+
+        $dari = $request->input('dari') ?: sprintf('%04d-01-01', $tahun);
+        $sampai = $request->input('sampai') ?: sprintf('%04d-12-31', $tahun);
 
         $titles = [
             'persediaan' => 'Laporan Persediaan',
@@ -58,10 +64,33 @@ class ReportController extends Controller
             'filename' => str_replace(' ', '-', strtolower($titles[$type])).'-'.$dari.'-'.$sampai,
             'dari' => $dari,
             'sampai' => $sampai,
+            'tahun' => $tahun,
+            'tahunOptions' => $this->tahunOptions(),
             'charts' => $this->charts($dari, $sampai),
             'headings' => $this->headings($type),
             'rows' => $this->rows($type, $dari, $sampai),
         ];
+    }
+
+    private function tahunOptions(): array
+    {
+        $years = Transaction::query()
+            ->selectRaw("DATE_FORMAT(tanggal, '%Y') as tahun")
+            ->distinct()
+            ->orderByDesc('tahun')
+            ->pluck('tahun')
+            ->map(fn ($y) => (int) $y)
+            ->all();
+
+        $current = (int) now()->year;
+        if (! in_array($current, $years, true)) {
+            $years[] = $current;
+        }
+
+        $years = array_values(array_unique($years));
+        rsort($years);
+
+        return $years;
     }
 
     private function headings(string $type): array

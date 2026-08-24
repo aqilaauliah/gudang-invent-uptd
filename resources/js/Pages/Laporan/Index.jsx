@@ -30,16 +30,28 @@ const TYPES = [
 
 const COLORS = ['#0B1F3A', '#2563EB', '#F5B700', '#16A34A', '#64748B'];
 
-export default function LaporanIndex({ type, title, dari, sampai, charts, headings, rows }) {
+export default function LaporanIndex({ type, title, dari, sampai, tahun, tahunOptions, charts, headings, rows }) {
     function apply(field, value) {
-        router.get(route('laporan.index'), { type, dari, sampai, [field]: value }, {
+        const params = { type, dari, sampai, tahun };
+        if (field === 'tahun') {
+            params.tahun = value || undefined;
+            delete params.dari;
+            delete params.sampai;
+        } else {
+            params[field] = value || undefined;
+        }
+        router.get(route('laporan.index'), params, {
             preserveState: true,
             replace: true,
         });
     }
 
     function exportUrl(format) {
-        const params = new URLSearchParams({ type, dari, sampai });
+        const params = new URLSearchParams();
+        params.set('type', type);
+        if (tahun) params.set('tahun', tahun);
+        if (dari) params.set('dari', dari);
+        if (sampai) params.set('sampai', sampai);
         return `/laporan/export/${format}?${params.toString()}`;
     }
 
@@ -48,17 +60,17 @@ export default function LaporanIndex({ type, title, dari, sampai, charts, headin
             <Head title="Laporan" />
 
             <PageHeader title="Laporan" description="Pantau dan ekspor laporan persediaan & inventaris.">
-                <Button variant="secondary" href={exportUrl('pdf')}>
+                <Button variant="secondary" external href={exportUrl('pdf')}>
                     <FileText className="h-4 w-4" />
                     Export PDF
                 </Button>
-                <Button href={exportUrl('excel')}>
+                <Button external href={exportUrl('excel')}>
                     <FileSpreadsheet className="h-4 w-4" />
                     Export Excel
                 </Button>
             </PageHeader>
 
-            <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="mb-6 flex flex-col gap-3">
                 <div className="flex flex-wrap gap-2">
                     {TYPES.map((t) => (
                         <button
@@ -74,20 +86,32 @@ export default function LaporanIndex({ type, title, dari, sampai, charts, headin
                         </button>
                     ))}
                 </div>
-                <div className="flex items-center gap-2">
-                    <input
-                        type="date"
-                        value={dari}
-                        onChange={(e) => apply('dari', e.target.value)}
-                        className="h-11 rounded-btn border border-line bg-white px-3 text-sm focus:border-primary focus:outline-none"
-                    />
-                    <span className="text-sm text-muted">s/d</span>
-                    <input
-                        type="date"
-                        value={sampai}
-                        onChange={(e) => apply('sampai', e.target.value)}
-                        className="h-11 rounded-btn border border-line bg-white px-3 text-sm focus:border-primary focus:outline-none"
-                    />
+                <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+                    <select
+                        value={tahun ?? ''}
+                        onChange={(e) => apply('tahun', e.target.value)}
+                        className="h-11 w-full rounded-btn border border-line bg-white px-3.5 text-sm focus:border-primary focus:outline-none sm:w-auto"
+                    >
+                        <option value="">Semua Tahun</option>
+                        {tahunOptions.map((y) => (
+                            <option key={y} value={y}>{y}</option>
+                        ))}
+                    </select>
+                    <div className="flex items-center gap-2">
+                        <input
+                            type="date"
+                            value={dari}
+                            onChange={(e) => apply('dari', e.target.value)}
+                            className="h-11 w-full rounded-btn border border-line bg-white px-3 text-sm focus:border-primary focus:outline-none sm:w-auto"
+                        />
+                        <span className="text-sm text-muted">s/d</span>
+                        <input
+                            type="date"
+                            value={sampai}
+                            onChange={(e) => apply('sampai', e.target.value)}
+                            className="h-11 w-full rounded-btn border border-line bg-white px-3 text-sm focus:border-primary focus:outline-none sm:w-auto"
+                        />
+                    </div>
                 </div>
             </div>
 
