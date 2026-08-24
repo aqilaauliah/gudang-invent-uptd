@@ -9,7 +9,7 @@ export default function AuthenticatedLayout({ children }) {
     return (
         <div className="min-h-screen bg-surface">
             <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-            <div className="lg:pl-[250px]">
+            <div className="md:pl-[250px]">
                 <Topbar onOpenSidebar={() => setSidebarOpen(true)} />
                 <main className="px-4 py-6 sm:px-6 lg:px-8">{children}</main>
             </div>

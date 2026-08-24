@@ -143,7 +143,7 @@ export default function AsetForm({ asset = null, locations, options }) {
                             </div>
                         </Card>
 
-                        <div className="flex justify-end gap-3">
+                        <div className="flex flex-col gap-3 [&>*]:w-full sm:flex-row sm:justify-end sm:[&>*]:w-auto">
                             <Button href="/aset" variant="secondary">
                                 Batal
                             </Button>

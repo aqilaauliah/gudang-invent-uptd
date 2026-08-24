@@ -71,7 +71,7 @@ export default function Masuk({ nomor, items, locations }) {
 
                     <FormTextarea label="Keterangan" value={form.data.keterangan} onChange={(e) => form.setData('keterangan', e.target.value)} error={form.errors.keterangan} placeholder="Keterangan tambahan (opsional)" />
 
-                    <div className="flex justify-end">
+                    <div className="flex flex-col [&>*]:w-full sm:flex-row sm:justify-end sm:[&>*]:w-auto">
                         <Button type="submit" size="lg" disabled={form.processing}>
                             <PackagePlus className="h-4 w-4" />
                             {form.processing ? 'Menyimpan...' : 'Simpan Barang Masuk'}

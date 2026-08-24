@@ -97,7 +97,7 @@ export default function Keluar({ nomor, items, locations }) {
                     <FormInput label="Keperluan" value={form.data.keperluan} onChange={(e) => form.setData('keperluan', e.target.value)} error={form.errors.keperluan} placeholder="Keperluan pengambilan" />
                     <FormTextarea label="Keterangan" value={form.data.keterangan} onChange={(e) => form.setData('keterangan', e.target.value)} error={form.errors.keterangan} placeholder="Keterangan tambahan (opsional)" />
 
-                    <div className="flex justify-end">
+                    <div className="flex flex-col [&>*]:w-full sm:flex-row sm:justify-end sm:[&>*]:w-auto">
                         <Button type="submit" size="lg" disabled={form.processing}>
                             <PackageMinus className="h-4 w-4" />
                             {form.processing ? 'Menyimpan...' : 'Simpan Barang Keluar'}

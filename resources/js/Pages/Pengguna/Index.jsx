@@ -73,46 +73,48 @@ export default function PenggunaIndex({ users, roles }) {
                 <EmptyState description="Belum ada pengguna yang terdaftar." actionLabel="+ Tambah Pengguna" action={openCreate} />
             ) : (
                 <div className="overflow-hidden rounded-card border border-line bg-white shadow-card">
-                    <table className="w-full text-left text-sm">
-                        <thead>
-                            <tr className="border-b border-line bg-surface text-xs uppercase tracking-wide text-muted">
-                                <th className="px-5 py-3.5 font-semibold">Nama</th>
-                                <th className="px-5 py-3.5 font-semibold">Email</th>
-                                <th className="px-5 py-3.5 font-semibold">Peran</th>
-                                <th className="px-5 py-3.5 text-right font-semibold">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-line">
-                            {users.data.map((user) => (
-                                <tr key={user.id} className="transition hover:bg-surface">
-                                    <td className="px-5 py-3.5">
-                                        <div className="flex items-center gap-3">
-                                            <span className="flex h-9 w-9 items-center justify-center rounded-card bg-navy text-sm font-semibold text-white">
-                                                {user.name.charAt(0)}
-                                            </span>
-                                            <span className="font-medium text-ink">{user.name}</span>
-                                        </div>
-                                    </td>
-                                    <td className="px-5 py-3.5 text-muted">{user.email}</td>
-                                    <td className="px-5 py-3.5">
-                                        {user.roles?.map((role) => (
-                                            <Badge key={role.id} tone="blue">{role.name}</Badge>
-                                        ))}
-                                    </td>
-                                    <td className="px-5 py-3.5">
-                                        <div className="flex items-center justify-end gap-1">
-                                            <button onClick={() => openEdit(user)} className="rounded-btn p-2 text-muted transition hover:bg-primary-soft hover:text-primary" title="Edit">
-                                                <Pencil className="h-4 w-4" />
-                                            </button>
-                                            <button onClick={() => setDeleting(user)} className="rounded-btn p-2 text-muted transition hover:bg-danger-soft hover:text-danger" title="Hapus">
-                                                <Trash2 className="h-4 w-4" />
-                                            </button>
-                                        </div>
-                                    </td>
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left text-sm">
+                            <thead>
+                                <tr className="border-b border-line bg-surface text-xs uppercase tracking-wide text-muted">
+                                    <th className="px-5 py-3.5 font-semibold">Nama</th>
+                                    <th className="px-5 py-3.5 font-semibold">Email</th>
+                                    <th className="px-5 py-3.5 font-semibold">Peran</th>
+                                    <th className="px-5 py-3.5 text-right font-semibold">Aksi</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody className="divide-y divide-line">
+                                {users.data.map((user) => (
+                                    <tr key={user.id} className="transition hover:bg-surface">
+                                        <td className="px-5 py-3.5">
+                                            <div className="flex items-center gap-3">
+                                                <span className="flex h-9 w-9 items-center justify-center rounded-card bg-navy text-sm font-semibold text-white">
+                                                    {user.name.charAt(0)}
+                                                </span>
+                                                <span className="font-medium text-ink">{user.name}</span>
+                                            </div>
+                                        </td>
+                                        <td className="px-5 py-3.5 text-muted">{user.email}</td>
+                                        <td className="px-5 py-3.5">
+                                            {user.roles?.map((role) => (
+                                                <Badge key={role.id} tone="blue">{role.name}</Badge>
+                                            ))}
+                                        </td>
+                                        <td className="px-5 py-3.5">
+                                            <div className="flex items-center justify-end gap-1">
+                                                <button onClick={() => openEdit(user)} className="rounded-btn p-2 text-muted transition hover:bg-primary-soft hover:text-primary" title="Edit">
+                                                    <Pencil className="h-4 w-4" />
+                                                </button>
+                                                <button onClick={() => setDeleting(user)} className="rounded-btn p-2 text-muted transition hover:bg-danger-soft hover:text-danger" title="Hapus">
+                                                    <Trash2 className="h-4 w-4" />
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             )}
 
@@ -131,7 +133,7 @@ export default function PenggunaIndex({ users, roles }) {
                             <option key={role} value={role}>{role}</option>
                         ))}
                     </FormSelect>
-                    <div className="flex justify-end gap-3 pt-2">
+                    <div className="flex flex-col gap-3 pt-2 [&>*]:w-full sm:flex-row sm:justify-end sm:[&>*]:w-auto">
                         <Button type="button" variant="secondary" onClick={() => setModalOpen(false)}>Batal</Button>
                         <Button type="submit" disabled={form.processing}>{form.processing ? 'Menyimpan...' : 'Simpan'}</Button>
                     </div>

@@ -30,7 +30,7 @@ export default function Topbar({ onOpenSidebar }) {
                 <button
                     type="button"
                     onClick={onOpenSidebar}
-                    className="rounded-btn p-2 text-muted transition hover:bg-surface lg:hidden"
+                    className="rounded-btn p-2 text-muted transition hover:bg-surface md:hidden"
                 >
                     <Menu className="h-5 w-5" />
                 </button>

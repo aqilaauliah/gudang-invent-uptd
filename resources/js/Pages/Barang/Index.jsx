@@ -215,7 +215,7 @@ export default function BarangIndex({ items, filters, options }) {
                     </div>
                     <FormTextarea label="Deskripsi" value={form.data.deskripsi} onChange={(e) => form.setData('deskripsi', e.target.value)} error={form.errors.deskripsi} placeholder="Deskripsi barang (opsional)" />
 
-                    <div className="flex justify-end gap-3 pt-2">
+                    <div className="flex flex-col gap-3 pt-2 [&>*]:w-full sm:flex-row sm:justify-end sm:[&>*]:w-auto">
                         <Button type="button" variant="secondary" onClick={() => setModalOpen(false)}>
                             Batal
                         </Button>

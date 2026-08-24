@@ -126,7 +126,7 @@ export default function LokasiIndex({ locations }) {
                     <FormInput label="Nama Lokasi" value={form.data.nama} onChange={(e) => form.setData('nama', e.target.value)} error={form.errors.nama} placeholder="Gudang Utama" />
                     <FormInput label="Penanggung Jawab" value={form.data.penanggung_jawab} onChange={(e) => form.setData('penanggung_jawab', e.target.value)} error={form.errors.penanggung_jawab} placeholder="Nama penanggung jawab" />
                     <FormTextarea label="Keterangan" value={form.data.keterangan} onChange={(e) => form.setData('keterangan', e.target.value)} error={form.errors.keterangan} placeholder="Keterangan lokasi (opsional)" />
-                    <div className="flex justify-end gap-3 pt-2">
+                    <div className="flex flex-col gap-3 pt-2 [&>*]:w-full sm:flex-row sm:justify-end sm:[&>*]:w-auto">
                         <Button type="button" variant="secondary" onClick={() => setModalOpen(false)}>Batal</Button>
                         <Button type="submit" disabled={form.processing}>{form.processing ? 'Menyimpan...' : 'Simpan'}</Button>
                     </div>

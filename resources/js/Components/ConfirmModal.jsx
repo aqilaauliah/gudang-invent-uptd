@@ -19,7 +19,7 @@ export default function ConfirmModal({
                 </div>
                 <p className="text-sm leading-6 text-muted">{message}</p>
             </div>
-            <div className="mt-6 flex justify-end gap-3">
+            <div className="mt-6 flex flex-col gap-3 [&>*]:w-full sm:flex-row sm:justify-end sm:[&>*]:w-auto">
                 <Button variant="secondary" onClick={onClose}>
                     Batal
                 </Button>
