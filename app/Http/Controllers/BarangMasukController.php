@@ -54,7 +54,19 @@ class BarangMasukController extends Controller
 
         activity()
             ->causedBy($request->user())
-            ->withProperties(['nomor' => $transaction->nomor, 'item' => $item?->nama, 'jumlah' => $transaction->jumlah])
+            ->withProperties([
+                'type' => 'barang_masuk',
+                'nomor' => $transaction->nomor,
+                'tanggal' => $transaction->tanggal->format('d M Y'),
+                'item' => $item?->nama,
+                'kode' => $item?->kode,
+                'jumlah' => $transaction->jumlah,
+                'satuan' => $item?->satuan,
+                'lokasi' => $transaction->location?->nama,
+                'sumber_supplier' => $transaction->sumber_supplier,
+                'no_dokumen' => $transaction->no_dokumen,
+                'petugas' => $transaction->nama_petugas,
+            ])
             ->log("Mencatat barang masuk {$transaction->nomor} - {$item?->nama} ({$transaction->jumlah} {$item?->satuan})");
 
         return redirect()->back();

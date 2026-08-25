@@ -124,11 +124,47 @@ class TransactionSeeder extends Seeder
 
         activity()
             ->causedBy($user)
-            ->withProperties(['nomor' => $transaction->nomor, 'item' => $item->nama, 'jumlah' => $transaction->jumlah])
+            ->withProperties($this->activityProperties($tipe, $transaction, $item, $data))
             ->log(match ($tipe) {
                 'masuk' => "Mencatat barang masuk {$transaction->nomor} - {$item->nama}",
-                'keluar' => "Mencatat barang keluar {$transaction->nomor} - {$item->nama}",
+                'keluar' => "Mencatat barang keluar {$transaction->nomor} - {$item->nama} oleh {$transaction->nama_pengambil}".($transaction->keperluan ? " untuk {$transaction->keperluan}" : ''),
                 'mutasi' => "Melakukan mutasi barang {$transaction->nomor} - {$item->nama}",
             });
+    }
+
+    private function activityProperties(string $tipe, Transaction $transaction, Item $item, array $data): array
+    {
+        $typeMap = ['masuk' => 'barang_masuk', 'keluar' => 'barang_keluar', 'mutasi' => 'mutasi'];
+
+        $properties = [
+            'type' => $typeMap[$tipe],
+            'nomor' => $transaction->nomor,
+            'tanggal' => $transaction->tanggal->format('d M Y'),
+            'item' => $item->nama,
+            'kode' => $item->kode,
+            'jumlah' => $transaction->jumlah,
+            'satuan' => $item->satuan,
+            'petugas' => $transaction->nama_petugas,
+        ];
+
+        if ($tipe === 'mutasi') {
+            $properties['dari'] = $data['from'];
+            $properties['ke'] = $data['to'];
+            $properties['keterangan'] = $transaction->keterangan;
+        } else {
+            $properties['lokasi'] = $data['location'];
+        }
+
+        if ($tipe === 'masuk') {
+            $properties['sumber_supplier'] = $transaction->sumber_supplier;
+            $properties['no_dokumen'] = $transaction->no_dokumen;
+        }
+
+        if ($tipe === 'keluar') {
+            $properties['nama_pengambil'] = $transaction->nama_pengambil;
+            $properties['keperluan'] = $transaction->keperluan;
+        }
+
+        return $properties;
     }
 }

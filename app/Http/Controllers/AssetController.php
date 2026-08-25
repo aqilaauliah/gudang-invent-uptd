@@ -95,7 +95,17 @@ class AssetController extends Controller
 
         activity()
             ->causedBy($request->user())
-            ->withProperties(['asset_id' => $asset->id, 'kode' => $asset->kode])
+            ->withProperties([
+                'type' => 'tambah_aset',
+                'kode' => $asset->kode,
+                'nama' => $asset->nama,
+                'kategori' => $asset->kategori,
+                'merk' => $asset->merk,
+                'lokasi' => $asset->location?->nama,
+                'penanggung_jawab' => $asset->penanggung_jawab,
+                'kondisi' => $asset->kondisi,
+                'status' => $asset->status,
+            ])
             ->log("Menambahkan aset \"{$asset->nama}\"");
 
         return redirect()->route('aset.index');
@@ -143,7 +153,17 @@ class AssetController extends Controller
 
         activity()
             ->causedBy($request->user())
-            ->withProperties(['asset_id' => $asset->id, 'kode' => $asset->kode])
+            ->withProperties([
+                'type' => 'ubah_aset',
+                'kode' => $asset->kode,
+                'nama' => $asset->nama,
+                'kategori' => $asset->kategori,
+                'merk' => $asset->merk,
+                'lokasi' => $asset->location?->nama,
+                'penanggung_jawab' => $asset->penanggung_jawab,
+                'kondisi' => $asset->kondisi,
+                'status' => $asset->status,
+            ])
             ->log("Mengubah data aset \"{$asset->nama}\"");
 
         return redirect()->route('aset.index');
@@ -163,7 +183,11 @@ class AssetController extends Controller
 
         activity()
             ->causedBy(request()->user())
-            ->withProperties(['kode' => $asset->kode])
+            ->withProperties([
+                'type' => 'hapus_aset',
+                'kode' => $asset->kode,
+                'nama' => $nama,
+            ])
             ->log("Menghapus aset \"{$nama}\"");
 
         return redirect()->back();

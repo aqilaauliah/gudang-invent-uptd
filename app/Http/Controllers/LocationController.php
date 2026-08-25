@@ -73,7 +73,12 @@ class LocationController extends Controller
 
         activity()
             ->causedBy($request->user())
-            ->withProperties(['location_id' => $location->id])
+            ->withProperties([
+                'type' => 'tambah_lokasi',
+                'nama' => $location->nama,
+                'keterangan' => $location->keterangan,
+                'penanggung_jawab' => $location->penanggung_jawab,
+            ])
             ->log("Menambahkan lokasi \"{$location->nama}\"");
 
         return redirect()->back();
@@ -87,7 +92,12 @@ class LocationController extends Controller
 
         activity()
             ->causedBy($request->user())
-            ->withProperties(['location_id' => $location->id])
+            ->withProperties([
+                'type' => 'ubah_lokasi',
+                'nama' => $location->nama,
+                'keterangan' => $location->keterangan,
+                'penanggung_jawab' => $location->penanggung_jawab,
+            ])
             ->log("Mengubah lokasi \"{$location->nama}\"");
 
         return redirect()->back();
@@ -102,6 +112,10 @@ class LocationController extends Controller
 
         activity()
             ->causedBy(request()->user())
+            ->withProperties([
+                'type' => 'hapus_lokasi',
+                'nama' => $nama,
+            ])
             ->log("Menghapus lokasi \"{$nama}\"");
 
         return redirect()->back();

@@ -39,7 +39,12 @@ class UserController extends Controller
 
         activity()
             ->causedBy($request->user())
-            ->withProperties(['user_id' => $user->id])
+            ->withProperties([
+                'type' => 'tambah_pengguna',
+                'nama' => $user->name,
+                'email' => $user->email,
+                'role' => $request->role,
+            ])
             ->log("Menambahkan pengguna \"{$user->name}\"");
 
         return redirect()->back();
@@ -63,7 +68,12 @@ class UserController extends Controller
 
         activity()
             ->causedBy($request->user())
-            ->withProperties(['user_id' => $user->id])
+            ->withProperties([
+                'type' => 'ubah_pengguna',
+                'nama' => $user->name,
+                'email' => $user->email,
+                'role' => $request->role,
+            ])
             ->log("Mengubah pengguna \"{$user->name}\"");
 
         return redirect()->back();
@@ -78,12 +88,18 @@ class UserController extends Controller
         }
 
         $nama = $user->name;
+        $email = $user->email;
         $user->delete();
 
         $this->flash('success', "Pengguna \"{$nama}\" berhasil dihapus.");
 
         activity()
             ->causedBy(request()->user())
+            ->withProperties([
+                'type' => 'hapus_pengguna',
+                'nama' => $nama,
+                'email' => $email,
+            ])
             ->log("Menghapus pengguna \"{$nama}\"");
 
         return redirect()->back();

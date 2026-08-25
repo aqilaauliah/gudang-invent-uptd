@@ -49,7 +49,14 @@ class ItemController extends Controller
 
         activity()
             ->causedBy($request->user())
-            ->withProperties(['item_id' => $item->id, 'kode' => $item->kode])
+            ->withProperties([
+                'type' => 'tambah_barang',
+                'kode' => $item->kode,
+                'nama' => $item->nama,
+                'kategori' => $item->kategori,
+                'satuan' => $item->satuan,
+                'stok_minimum' => $item->stok_minimum,
+            ])
             ->log("Menambahkan barang baru \"{$item->nama}\"");
 
         return redirect()->back();
@@ -63,7 +70,14 @@ class ItemController extends Controller
 
         activity()
             ->causedBy($request->user())
-            ->withProperties(['item_id' => $item->id, 'kode' => $item->kode])
+            ->withProperties([
+                'type' => 'ubah_barang',
+                'kode' => $item->kode,
+                'nama' => $item->nama,
+                'kategori' => $item->kategori,
+                'satuan' => $item->satuan,
+                'stok_minimum' => $item->stok_minimum,
+            ])
             ->log("Mengubah data barang \"{$item->nama}\"");
 
         return redirect()->back();
@@ -78,7 +92,11 @@ class ItemController extends Controller
 
         activity()
             ->causedBy(request()->user())
-            ->withProperties(['kode' => $item->kode])
+            ->withProperties([
+                'type' => 'hapus_barang',
+                'kode' => $item->kode,
+                'nama' => $nama,
+            ])
             ->log("Menghapus barang \"{$nama}\"");
 
         return redirect()->back();

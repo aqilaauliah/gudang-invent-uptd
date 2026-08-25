@@ -53,7 +53,18 @@ class KioskController extends Controller
         $this->flash('success', 'Pengambilan barang berhasil dicatat.');
 
         activity()
-            ->withProperties(['nomor' => $transaction->nomor, 'item' => $item?->nama, 'jumlah' => $transaction->jumlah, 'mode' => 'self-service'])
+            ->withProperties([
+                'type' => 'pengambilan_kiosk',
+                'nomor' => $transaction->nomor,
+                'tanggal' => $transaction->tanggal->format('d M Y'),
+                'item' => $item?->nama,
+                'kode' => $item?->kode,
+                'jumlah' => $transaction->jumlah,
+                'satuan' => $item?->satuan,
+                'lokasi' => $transaction->location?->nama,
+                'nama_pengambil' => $transaction->nama_pengambil,
+                'keperluan' => $transaction->keperluan,
+            ])
             ->log("Pengambilan barang (self-service) {$transaction->nomor} - {$item?->nama} oleh {$transaction->nama_pengambil}");
 
         return redirect()->route('kiosk.index');

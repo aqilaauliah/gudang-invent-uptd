@@ -61,7 +61,19 @@ class MutasiController extends Controller
 
         activity()
             ->causedBy($request->user())
-            ->withProperties(['nomor' => $transaction->nomor, 'item' => $item?->nama, 'jumlah' => $transaction->jumlah, 'dari' => $from?->nama, 'ke' => $to?->nama])
+            ->withProperties([
+                'type' => 'mutasi',
+                'nomor' => $transaction->nomor,
+                'tanggal' => $transaction->tanggal->format('d M Y'),
+                'item' => $item?->nama,
+                'kode' => $item?->kode,
+                'jumlah' => $transaction->jumlah,
+                'satuan' => $item?->satuan,
+                'dari' => $from?->nama,
+                'ke' => $to?->nama,
+                'keterangan' => $transaction->keterangan,
+                'petugas' => $transaction->nama_petugas,
+            ])
             ->log("Melakukan mutasi barang {$item?->nama} dari {$from?->nama} ke {$to?->nama} ({$transaction->jumlah} {$item?->satuan})");
 
         return redirect()->back();

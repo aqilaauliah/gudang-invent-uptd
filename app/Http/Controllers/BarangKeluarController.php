@@ -49,13 +49,26 @@ class BarangKeluarController extends Controller
         });
 
         $item = Item::find($transaction->item_id);
+        $keperluan = $transaction->keperluan ? " untuk {$transaction->keperluan}" : '';
 
         $this->flash('success', 'Barang keluar berhasil dicatat.');
 
         activity()
             ->causedBy($request->user())
-            ->withProperties(['nomor' => $transaction->nomor, 'item' => $item?->nama, 'jumlah' => $transaction->jumlah])
-            ->log("Mencatat barang keluar {$transaction->nomor} - {$item?->nama} ({$transaction->jumlah} {$item?->satuan})");
+            ->withProperties([
+                'type' => 'barang_keluar',
+                'nomor' => $transaction->nomor,
+                'tanggal' => $transaction->tanggal->format('d M Y'),
+                'item' => $item?->nama,
+                'kode' => $item?->kode,
+                'jumlah' => $transaction->jumlah,
+                'satuan' => $item?->satuan,
+                'lokasi' => $transaction->location?->nama,
+                'nama_pengambil' => $transaction->nama_pengambil,
+                'keperluan' => $transaction->keperluan,
+                'petugas' => $transaction->nama_petugas,
+            ])
+            ->log("Mencatat barang keluar {$transaction->nomor} - {$item?->nama} ({$transaction->jumlah} {$item?->satuan}) oleh {$transaction->nama_pengambil}{$keperluan}");
 
         return redirect()->back();
     }
