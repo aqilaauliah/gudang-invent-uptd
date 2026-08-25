@@ -74,9 +74,9 @@ export default function Sidebar({ open, onClose }) {
                         className="h-11 w-11 shrink-0 object-contain"
                     />
                     <div className="min-w-0">
-                        <p className="font-display text-lg font-bold leading-tight text-white">SIGUDIN</p>
+                        <p className="font-display text-lg font-bold leading-tight text-white">INVENTRA</p>
                         <p className="truncate text-[11px] leading-tight text-white/60">
-                            Sistem Informasi Gudang dan Inventaris
+                            Inventory & Asset Management System
                         </p>
                     </div>
                     <button

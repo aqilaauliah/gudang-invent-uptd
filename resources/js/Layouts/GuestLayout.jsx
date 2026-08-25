@@ -12,8 +12,8 @@ export default function GuestLayout({ children }) {
                         className="h-14 w-14 object-contain"
                     />
                     <div>
-                        <p className="font-display text-2xl font-bold text-white">SIGUDIN</p>
-                        <p className="text-sm text-white/60">Sistem Informasi Gudang dan Inventaris</p>
+                        <p className="font-display text-2xl font-bold text-white">INVENTRA</p>
+                        <p className="text-sm text-white/60">Inventory & Asset Management System</p>
                     </div>
                 </div>
 

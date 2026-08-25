@@ -26,8 +26,8 @@ export default function Login({ status, canResetPassword }) {
                     <div className="flex items-center gap-3">
                         <img src="/image/logo-disnakertrans.png" alt="Logo" className="h-12 w-12 object-contain" />
                         <div>
-                            <p className="font-display text-xl font-bold text-ink">SIGUDIN</p>
-                            <p className="text-xs text-muted">Sistem Informasi Gudang dan Inventaris</p>
+                            <p className="font-display text-xl font-bold text-ink">INVENTRA</p>
+                            <p className="text-xs text-muted">Inventory & Asset Management System</p>
                         </div>
                     </div>
                 </div>

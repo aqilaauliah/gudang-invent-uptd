@@ -35,7 +35,7 @@ export default function Topbar({ onOpenSidebar }) {
                     <Menu className="h-5 w-5" />
                 </button>
                 <div>
-                    <p className="text-xs text-muted">SIGUDIN</p>
+                    <p className="text-xs text-muted">INVENTRA</p>
                     <h2 className="font-display text-lg font-semibold leading-tight text-ink">{pageTitle}</h2>
                 </div>
             </div>
