@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { LogIn, Mail, Lock } from 'lucide-react';
 import GuestLayout from '@/Layouts/GuestLayout';
 import Button from '@/Components/Button';
 
@@ -21,48 +20,40 @@ export default function Login({ status, canResetPassword }) {
     return (
         <GuestLayout>
             <Head title="Masuk" />
-            <div className="w-full max-w-sm">
-                <div className="mb-8 lg:hidden">
-                    <div className="flex items-center gap-3">
-                        <img src="/image/logo-disnakertrans.png" alt="Logo" className="h-12 w-12 object-contain" />
-                        <div>
-                            <p className="font-display text-xl font-bold text-ink">INVENTRA</p>
-                            <p className="text-xs text-muted">Inventory & Asset Management System</p>
-                        </div>
-                    </div>
-                </div>
 
-                <h2 className="font-display text-2xl font-bold text-ink">Masuk</h2>
-                <p className="mt-1.5 text-sm text-muted">
-                    Masuk untuk mengelola persediaan dan inventaris.
-                </p>
+            <div className="rounded-2xl border border-line bg-white p-8 shadow-sm sm:p-10">
+                <div className="mb-8 flex flex-col items-center text-center">
+    <img src="/image/logo-disnakertrans.png" alt="Logo" className="h-30 w-30 object-contain" />
+    <p className="mt-1.5 font-display text-lg font-bold text-ink">INVENTRA</p>
+    <p className="text-xs text-muted">Inventory & Asset Management System</p>
+</div>
+
+                <h2 className="font-display text-xl font-bold text-ink">Masuk ke akun Anda</h2>
+                <p className="mt-1 text-sm text-muted">Kelola persediaan dan inventaris di sini.</p>
 
                 {status && (
-                    <div className="mt-4 rounded-btn border border-success/30 bg-success-soft px-4 py-3 text-sm text-success">
+                    <div className="mt-5 rounded-btn border border-success/30 bg-success-soft px-4 py-3 text-sm text-success">
                         {status}
                     </div>
                 )}
 
-                <form onSubmit={submit} className="mt-8 space-y-5">
+                <form onSubmit={submit} className="mt-7 space-y-5">
                     <div>
                         <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-ink">
                             Email
                         </label>
-                        <div className="relative">
-                            <Mail className="pointer-events-none absolute left-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-muted" />
-                            <input
-                                id="email"
-                                type="email"
-                                value={data.email}
-                                autoComplete="username"
-                                autoFocus
-                                onChange={(e) => setData('email', e.target.value)}
-                                className={`block h-12 w-full rounded-btn border bg-white pl-11 pr-3.5 text-sm text-ink transition focus:outline-none ${
-                                    errors.email ? 'border-danger' : 'border-line focus:border-primary'
-                                }`}
-                                placeholder="nama@uptd.go.id"
-                            />
-                        </div>
+                        <input
+                            id="email"
+                            type="email"
+                            value={data.email}
+                            autoComplete="username"
+                            autoFocimgus
+                            onChange={(e) => setData('email', e.target.value)}
+                            className={`block h-11 w-full rounded-btn border bg-white px-3.5 text-sm text-ink transition focus:outline-none ${
+                                errors.email ? 'border-danger' : 'border-line focus:border-primary'
+                            }`}
+                            placeholder="nama@uptd.go.id"
+                        />
                         {errors.email && <p className="mt-1.5 text-xs text-danger">{errors.email}</p>}
                     </div>
 
@@ -70,25 +61,22 @@ export default function Login({ status, canResetPassword }) {
                         <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-ink">
                             Password
                         </label>
-                        <div className="relative">
-                            <Lock className="pointer-events-none absolute left-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-muted" />
-                            <input
-                                id="password"
-                                type="password"
-                                value={data.password}
-                                autoComplete="current-password"
-                                onChange={(e) => setData('password', e.target.value)}
-                                className={`block h-12 w-full rounded-btn border bg-white pl-11 pr-3.5 text-sm text-ink transition focus:outline-none ${
-                                    errors.password ? 'border-danger' : 'border-line focus:border-primary'
-                                }`}
-                                placeholder="••••••••"
-                            />
-                        </div>
+                        <input
+                            id="password"
+                            type="password"
+                            value={data.password}
+                            autoComplete="current-password"
+                            onChange={(e) => setData('password', e.target.value)}
+                            className={`block h-11 w-full rounded-btn border bg-white px-3.5 text-sm text-ink transition focus:outline-none ${
+                                errors.password ? 'border-danger' : 'border-line focus:border-primary'
+                            }`}
+                            placeholder="••••••••"
+                        />
                         {errors.password && <p className="mt-1.5 text-xs text-danger">{errors.password}</p>}
                     </div>
 
                     <div className="flex items-center justify-between gap-3">
-                        <label className="flex items-center gap-2.5 text-sm text-muted">
+                        <label className="flex items-center gap-2 text-sm text-muted">
                             <input
                                 type="checkbox"
                                 checked={data.remember}
@@ -108,7 +96,6 @@ export default function Login({ status, canResetPassword }) {
                     </div>
 
                     <Button type="submit" disabled={processing} className="w-full" size="lg">
-                        <LogIn className="h-4 w-4" />
                         {processing ? 'Memproses...' : 'Masuk'}
                     </Button>
                 </form>

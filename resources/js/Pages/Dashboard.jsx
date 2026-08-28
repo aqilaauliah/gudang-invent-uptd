@@ -116,11 +116,11 @@ export default function Dashboard({ stats, charts, lowStock, recentActivities })
 
             <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
                 <Card title="Barang Berdasarkan Lokasi">
-                    <div className="h-64">
+                    <div className="h-72">
                         <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={charts.stokPerLokasi.map((d) => ({ name: d.name, stok: Number(d.value) }))}>
+                            <BarChart data={charts.stokPerLokasi.map((d) => ({ name: d.name, stok: Number(d.value) }))} margin={{ bottom: 20 }}>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
-                                <XAxis dataKey="name" tickLine={false} axisLine={false} fontSize={11} stroke="#64748B" interval={0} />
+                                <XAxis dataKey="name" tickLine={false} axisLine={false} fontSize={11} stroke="#64748B" interval={0} angle={-35} textAnchor="end" height={70} />
                                 <YAxis tickLine={false} axisLine={false} fontSize={12} stroke="#64748B" allowDecimals={false} />
                                 <Tooltip
                                     cursor={{ fill: '#F7F9FC' }}
