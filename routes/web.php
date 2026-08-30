@@ -5,6 +5,7 @@ use App\Http\Controllers\AssetController;
 use App\Http\Controllers\BarangKeluarController;
 use App\Http\Controllers\BarangMasukController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EmailChangeController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\KioskController;
 use App\Http\Controllers\LocationController;
@@ -70,6 +71,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::post('/profile/email', [EmailChangeController::class, 'send'])->name('profile.email.send');
+    Route::post('/profile/email/verify', [EmailChangeController::class, 'verify'])->name('profile.email.verify');
 });
 
 require __DIR__.'/auth.php';

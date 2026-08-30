@@ -24,6 +24,7 @@ class ProfileController extends Controller
         return Inertia::render('Profile/Edit', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),
+            'maskedEmail' => $this->maskEmail($request->user()->email),
         ]);
     }
 
@@ -34,15 +35,21 @@ class ProfileController extends Controller
     {
         $request->user()->fill($request->validated());
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
-        }
-
         $request->user()->save();
 
         $this->flash('success', 'Profil berhasil diperbarui.');
 
         return Redirect::route('profile.edit');
+    }
+
+    /**
+     * Mask an email address for display, e.g. "u***@gmail.com".
+     */
+    private function maskEmail(string $email): string
+    {
+        [$local, $domain] = explode('@', $email, 2);
+
+        return substr($local, 0, 1).'***@'.$domain;
     }
 
     /**

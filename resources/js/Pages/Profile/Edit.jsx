@@ -1,17 +1,17 @@
 import { Head, useForm, usePage } from '@inertiajs/react';
-import { User, KeyRound } from 'lucide-react';
+import { KeyRound } from 'lucide-react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import PageHeader from '@/Components/PageHeader';
 import Card from '@/Components/Card';
 import Button from '@/Components/Button';
 import FormInput from '@/Components/FormInput';
+import ChangeEmail from './ChangeEmail';
 
-export default function ProfileEdit({ mustVerifyEmail, status }) {
+export default function ProfileEdit({ mustVerifyEmail, status, maskedEmail }) {
     const { auth } = usePage().props;
 
     const profile = useForm({
         name: auth.user.name,
-        email: auth.user.email,
     });
 
     const password = useForm({
@@ -42,7 +42,6 @@ export default function ProfileEdit({ mustVerifyEmail, status }) {
                 <Card title="Informasi Profil">
                     <form onSubmit={updateProfile} className="space-y-4">
                         <FormInput label="Nama" value={profile.data.name} onChange={(e) => profile.setData('name', e.target.value)} error={profile.errors.name} />
-                        <FormInput label="Email" type="email" value={profile.data.email} onChange={(e) => profile.setData('email', e.target.value)} error={profile.errors.email} />
                         <div className="flex flex-col [&>*]:w-full sm:flex-row sm:justify-end sm:[&>*]:w-auto">
                             <Button type="submit" disabled={profile.processing}>
                                 {profile.processing ? 'Menyimpan...' : 'Simpan Profil'}
@@ -51,6 +50,10 @@ export default function ProfileEdit({ mustVerifyEmail, status }) {
                     </form>
                 </Card>
 
+                <ChangeEmail maskedEmail={maskedEmail} />
+            </div>
+
+            <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
                 <Card title="Ubah Kata Sandi">
                     <form onSubmit={updatePassword} className="space-y-4">
                         <FormInput label="Kata Sandi Saat Ini" type="password" value={password.data.current_password} onChange={(e) => password.setData('current_password', e.target.value)} error={password.errors.current_password} autoComplete="current-password" />
