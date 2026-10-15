@@ -41,7 +41,6 @@ class RolePermissionSeeder extends Seeder
             'manage-transactions',
             'view-assets',
             'view-locations',
-            'view-reports',
         ]);
     }
 }

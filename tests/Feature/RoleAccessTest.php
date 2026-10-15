@@ -50,6 +50,7 @@ class RoleAccessTest extends TestCase
 
         $this->actingAs($petugas)->get('/pengguna')->assertForbidden();
         $this->actingAs($petugas)->get('/aktivitas')->assertForbidden();
+        $this->actingAs($petugas)->get('/laporan')->assertForbidden();
         $this->actingAs($petugas)->get('/aset/create')->assertForbidden();
         $this->actingAs($petugas)->post('/barang', [])->assertForbidden();
         $this->actingAs($petugas)->post('/lokasi', [])->assertForbidden();
@@ -68,6 +69,7 @@ class RoleAccessTest extends TestCase
         $admin = User::factory()->create();
         $admin->assignRole('Admin');
 
+        $this->assertTrue($admin->can('view-reports'));
         $this->actingAs($admin)->get('/pengguna')->assertOk();
         $this->actingAs($admin)->get('/aktivitas')->assertOk();
         $this->actingAs($admin)->get('/aset/create')->assertOk();

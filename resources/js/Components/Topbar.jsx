@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, usePage } from '@inertiajs/react';
-import { Menu, Bell, ChevronDown, LogOut, Settings, User as UserIcon } from 'lucide-react';
+import { Menu, Bell, ChevronDown, LogOut } from 'lucide-react';
 
 const titles = {
     '/dashboard': 'Dashboard',
@@ -82,25 +82,10 @@ export default function Topbar({ onOpenSidebar }) {
                                     <p className="truncate text-xs text-muted">{auth.user?.email}</p>
                                 </div>
                                 <Link
-                                    href="/profile"
-                                    onClick={() => setMenuOpen(false)}
-                                    className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-ink transition hover:bg-surface"
-                                >
-                                    <Settings className="h-4 w-4 text-muted" />
-                                    Pengaturan
-                                </Link>
-                                <Link
-                                    href="/pengguna"
-                                    onClick={() => setMenuOpen(false)}
-                                    className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-ink transition hover:bg-surface"
-                                >
-                                    <UserIcon className="h-4 w-4 text-muted" />
-                                    Pengguna
-                                </Link>
-                                <Link
                                     href="/logout"
                                     method="post"
                                     as="button"
+                                    onClick={() => setMenuOpen(false)}
                                     className="flex w-full items-center gap-2.5 px-4 py-2.5 text-sm text-danger transition hover:bg-danger-soft"
                                 >
                                     <LogOut className="h-4 w-4" />
