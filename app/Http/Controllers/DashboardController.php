@@ -47,14 +47,16 @@ class DashboardController extends Controller
                 'stok_status' => $i->stok_status,
             ]);
 
-        $recentActivities = Activity::with('causer')->latest()->take(10)->get()
-            ->map(fn ($a) => [
-                'id' => $a->id,
-                'description' => $a->description,
-                'causer' => $a->causer?->name,
-                'time' => $a->created_at?->diffForHumans(),
-                'created_at' => $a->created_at?->toISOString(),
-            ]);
+        $recentActivities = $request->user()->can('view-activities')
+            ? Activity::with('causer')->latest()->take(10)->get()
+                ->map(fn ($a) => [
+                    'id' => $a->id,
+                    'description' => $a->description,
+                    'causer' => $a->causer?->name,
+                    'time' => $a->created_at?->diffForHumans(),
+                    'created_at' => $a->created_at?->toISOString(),
+                ])
+            : [];
 
         return Inertia::render('Dashboard', [
             'stats' => $stats,

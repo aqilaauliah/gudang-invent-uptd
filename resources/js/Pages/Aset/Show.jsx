@@ -1,4 +1,4 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import { Pencil, MapPin, Calendar, History, MonitorSmartphone } from 'lucide-react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import PageHeader from '@/Components/PageHeader';
@@ -7,6 +7,8 @@ import Button from '@/Components/Button';
 import { KondisiBadge, Badge } from '@/Components/StatusBadge';
 
 export default function AsetShow({ asset, histories }) {
+    const { auth } = usePage().props;
+    const canManageAssets = auth.permissions?.includes('manage-assets') ?? false;
     const fmt = (n) => (n ? Number(n).toLocaleString('id-ID') : null);
 
     return (
@@ -14,10 +16,12 @@ export default function AsetShow({ asset, histories }) {
             <Head title={asset.nama} />
 
             <PageHeader title="Detail Aset" description={asset.kode}>
-                <Button href={`/aset/${asset.id}/edit`} variant="secondary">
-                    <Pencil className="h-4 w-4" />
-                    Edit
-                </Button>
+                {canManageAssets && (
+                    <Button href={`/aset/${asset.id}/edit`} variant="secondary">
+                        <Pencil className="h-4 w-4" />
+                        Edit
+                    </Button>
+                )}
             </PageHeader>
 
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">

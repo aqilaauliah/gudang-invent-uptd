@@ -130,7 +130,29 @@ Admin dapat:
 * Mengelola pengguna.
 * Melihat riwayat aktivitas.
 
-Untuk versi awal, sistem dapat menggunakan satu role utama yaitu **Admin**.
+### Petugas Gudang
+Petugas Gudang memiliki akses terbatas untuk kebutuhan operasional harian.
+Petugas Gudang dapat:
+* Melihat dashboard ringkasan operasional.
+* Melihat data barang (hanya lihat).
+* Melihat persediaan/stok (hanya lihat).
+* Mencatat dan melihat barang masuk.
+* Mencatat dan melihat barang keluar.
+* Mencatat dan melihat mutasi barang (perpindahan barang).
+* Melihat data inventaris/aset (hanya lihat).
+* Melihat data lokasi (hanya lihat).
+* Melihat laporan operasional yang diperlukan.
+* Mengelola profil sendiri.
+
+Petugas Gudang tidak dapat:
+* Menambah, mengubah, atau menghapus data barang, aset, dan lokasi.
+* Melakukan penyesuaian stok.
+* Mengubah atau menghapus transaksi (barang masuk, barang keluar, mutasi) yang sudah disimpan.
+* Mengekspor laporan.
+* Mengelola pengguna dan peran.
+* Mengakses riwayat aktivitas.
+
+Sistem memiliki dua role: *Admin* dan *Petugas Gudang*.
 
 ---
 

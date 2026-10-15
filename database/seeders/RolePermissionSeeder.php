@@ -13,13 +13,18 @@ class RolePermissionSeeder extends Seeder
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         $permissions = [
+            'view-items',
             'manage-items',
-            'manage-stocks',
+            'view-stocks',
             'manage-transactions',
+            'view-assets',
             'manage-assets',
+            'view-locations',
             'manage-locations',
-            'manage-reports',
+            'view-reports',
+            'export-reports',
             'manage-users',
+            'view-activities',
         ];
 
         foreach ($permissions as $permission) {
@@ -30,6 +35,13 @@ class RolePermissionSeeder extends Seeder
         $petugas = Role::findOrCreate('Petugas Gudang');
 
         $admin->syncPermissions($permissions);
-        $petugas->syncPermissions(array_diff($permissions, ['manage-users']));
+        $petugas->syncPermissions([
+            'view-items',
+            'view-stocks',
+            'manage-transactions',
+            'view-assets',
+            'view-locations',
+            'view-reports',
+        ]);
     }
 }

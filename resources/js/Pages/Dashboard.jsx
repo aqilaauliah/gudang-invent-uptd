@@ -33,6 +33,8 @@ const CHART_COLORS = ['#0B1F3A', '#2563EB', '#F5B700', '#16A34A', '#64748B'];
 
 export default function Dashboard({ stats, charts, lowStock, recentActivities }) {
     const { auth } = usePage().props;
+    const canManageItems = auth.permissions?.includes('manage-items') ?? false;
+    const canViewActivities = auth.permissions?.includes('view-activities') ?? false;
     const fmt = (n) => Number(n ?? 0).toLocaleString('id-ID');
 
     const pieData = (data) =>
@@ -51,10 +53,12 @@ export default function Dashboard({ stats, charts, lowStock, recentActivities })
                         Kelola persediaan dan inventaris UPTD dengan lebih mudah dan terstruktur.
                     </p>
                 </div>
-                <Button href="/barang">
-                    <Plus className="h-4 w-4" />
-                    Tambah Barang
-                </Button>
+                {canManageItems && (
+                    <Button href="/barang">
+                        <Plus className="h-4 w-4" />
+                        Tambah Barang
+                    </Button>
+                )}
             </div>
 
             <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-6">
@@ -192,7 +196,7 @@ export default function Dashboard({ stats, charts, lowStock, recentActivities })
                 </Card>
             </div>
 
-            <div className="mt-6">
+            {canViewActivities && <div className="mt-6">
                 <Card title="Aktivitas Terbaru">
                     {recentActivities.length === 0 ? (
                         <p className="py-8 text-center text-sm text-muted">Belum ada aktivitas tercatat.</p>
@@ -214,7 +218,7 @@ export default function Dashboard({ stats, charts, lowStock, recentActivities })
                         </ul>
                     )}
                 </Card>
-            </div>
+            </div>}
         </AuthenticatedLayout>
     );
 }

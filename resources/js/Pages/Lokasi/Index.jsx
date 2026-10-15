@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Head, Link, router, useForm } from '@inertiajs/react';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import { Plus, MapPin, Package, Boxes, MonitorSmartphone, Pencil, Trash2, ArrowRight, User } from 'lucide-react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import PageHeader from '@/Components/PageHeader';
@@ -11,6 +11,8 @@ import FormTextarea from '@/Components/FormTextarea';
 import EmptyState from '@/Components/EmptyState';
 
 export default function LokasiIndex({ locations }) {
+    const { auth } = usePage().props;
+    const canManageLocations = auth.permissions?.includes('manage-locations') ?? false;
     const [modalOpen, setModalOpen] = useState(false);
     const [editing, setEditing] = useState(null);
     const [deleting, setDeleting] = useState(null);
@@ -56,17 +58,19 @@ export default function LokasiIndex({ locations }) {
             <Head title="Lokasi" />
 
             <PageHeader title="Lokasi" description="Ringkasan penyimpanan di setiap lokasi.">
-                <Button onClick={openCreate}>
-                    <Plus className="h-4 w-4" />
-                    Tambah Lokasi
-                </Button>
+                {canManageLocations && (
+                    <Button onClick={openCreate}>
+                        <Plus className="h-4 w-4" />
+                        Tambah Lokasi
+                    </Button>
+                )}
             </PageHeader>
 
             {locations.length === 0 ? (
                 <EmptyState
-                    description="Belum ada lokasi yang terdaftar. Tambahkan lokasi penyimpanan."
-                    actionLabel="+ Tambah Lokasi"
-                    action={openCreate}
+                    description="Belum ada lokasi yang terdaftar."
+                    actionLabel={canManageLocations ? '+ Tambah Lokasi' : undefined}
+                    action={canManageLocations ? openCreate : undefined}
                 />
             ) : (
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -86,14 +90,16 @@ export default function LokasiIndex({ locations }) {
                                         )}
                                     </div>
                                 </div>
-                                <div className="flex gap-1">
-                                    <button onClick={() => openEdit(location)} className="rounded-btn p-2 text-muted transition hover:bg-primary-soft hover:text-primary" title="Edit">
-                                        <Pencil className="h-4 w-4" />
-                                    </button>
-                                    <button onClick={() => setDeleting(location)} className="rounded-btn p-2 text-muted transition hover:bg-danger-soft hover:text-danger" title="Hapus">
-                                        <Trash2 className="h-4 w-4" />
-                                    </button>
-                                </div>
+                                {canManageLocations && (
+                                    <div className="flex gap-1">
+                                        <button onClick={() => openEdit(location)} className="rounded-btn p-2 text-muted transition hover:bg-primary-soft hover:text-primary" title="Edit">
+                                            <Pencil className="h-4 w-4" />
+                                        </button>
+                                        <button onClick={() => setDeleting(location)} className="rounded-btn p-2 text-muted transition hover:bg-danger-soft hover:text-danger" title="Hapus">
+                                            <Trash2 className="h-4 w-4" />
+                                        </button>
+                                    </div>
+                                )}
                             </div>
 
                             <div className="mt-5 grid grid-cols-3 divide-x divide-line rounded-btn bg-surface py-3 text-center">
@@ -121,7 +127,7 @@ export default function LokasiIndex({ locations }) {
                 </div>
             )}
 
-            <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editing ? 'Edit Lokasi' : 'Tambah Lokasi'}>
+            {canManageLocations && <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editing ? 'Edit Lokasi' : 'Tambah Lokasi'}>
                 <form onSubmit={submit} className="space-y-4">
                     <FormInput label="Nama Lokasi" value={form.data.nama} onChange={(e) => form.setData('nama', e.target.value)} error={form.errors.nama} placeholder="Gudang Utama" />
                     <FormInput label="Penanggung Jawab" value={form.data.penanggung_jawab} onChange={(e) => form.setData('penanggung_jawab', e.target.value)} error={form.errors.penanggung_jawab} placeholder="Nama penanggung jawab" />
@@ -131,15 +137,15 @@ export default function LokasiIndex({ locations }) {
                         <Button type="submit" disabled={form.processing}>{form.processing ? 'Menyimpan...' : 'Simpan'}</Button>
                     </div>
                 </form>
-            </Modal>
+            </Modal>}
 
-            <ConfirmModal
+            {canManageLocations && <ConfirmModal
                 open={!!deleting}
                 onClose={() => setDeleting(null)}
                 onConfirm={confirmDelete}
                 title="Hapus Lokasi"
                 message={`Lokasi "${deleting?.nama}" akan dihapus. Tindakan ini tidak dapat dibatalkan.`}
-            />
+            />}
         </AuthenticatedLayout>
     );
 }

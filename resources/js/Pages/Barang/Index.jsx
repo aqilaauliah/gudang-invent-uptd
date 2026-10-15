@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Head, router, useForm } from '@inertiajs/react';
+import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { Plus, Search, Pencil, Trash2 } from 'lucide-react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import PageHeader from '@/Components/PageHeader';
@@ -14,6 +14,8 @@ import EmptyState from '@/Components/EmptyState';
 import { StatusBadge, ItemStatusBadge } from '@/Components/StatusBadge';
 
 export default function BarangIndex({ items, filters, options }) {
+    const { auth } = usePage().props;
+    const canManageItems = auth.permissions?.includes('manage-items') ?? false;
     const [modalOpen, setModalOpen] = useState(false);
     const [editing, setEditing] = useState(null);
     const [deleting, setDeleting] = useState(null);
@@ -84,11 +86,16 @@ export default function BarangIndex({ items, filters, options }) {
         <AuthenticatedLayout>
             <Head title="Data Barang" />
 
-            <PageHeader title="Data Barang" description="Kelola master data barang persediaan.">
-                <Button onClick={openCreate}>
-                    <Plus className="h-4 w-4" />
-                    Tambah Barang
-                </Button>
+            <PageHeader
+                title="Data Barang"
+                description={canManageItems ? 'Kelola master data barang persediaan.' : 'Lihat data barang persediaan.'}
+            >
+                {canManageItems && (
+                    <Button onClick={openCreate}>
+                        <Plus className="h-4 w-4" />
+                        Tambah Barang
+                    </Button>
+                )}
             </PageHeader>
 
             <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -128,9 +135,9 @@ export default function BarangIndex({ items, filters, options }) {
             <div className="overflow-hidden rounded-card border border-line bg-white shadow-card">
                 {items.data.length === 0 ? (
                     <EmptyState
-                        description="Belum ada barang yang tersedia. Tambahkan barang untuk mulai mengelola persediaan."
-                        actionLabel="+ Tambah Barang"
-                        action={openCreate}
+                        description="Belum ada barang yang tersedia."
+                        actionLabel={canManageItems ? '+ Tambah Barang' : undefined}
+                        action={canManageItems ? openCreate : undefined}
                     />
                 ) : (
                     <div className="overflow-x-auto">
@@ -144,7 +151,7 @@ export default function BarangIndex({ items, filters, options }) {
                                     <th className="px-5 py-3.5 text-right font-semibold">Stok</th>
                                     <th className="px-5 py-3.5 text-right font-semibold">Minimum</th>
                                     <th className="px-5 py-3.5 font-semibold">Status Stok</th>
-                                    <th className="px-5 py-3.5 text-right font-semibold">Aksi</th>
+                                    {canManageItems && <th className="px-5 py-3.5 text-right font-semibold">Aksi</th>}
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-line">
@@ -160,8 +167,9 @@ export default function BarangIndex({ items, filters, options }) {
                                         <td className="px-5 py-3.5 text-right font-semibold text-ink">{item.total_stock}</td>
                                         <td className="px-5 py-3.5 text-right text-muted">{item.stok_minimum}</td>
                                         <td className="px-5 py-3.5"><StatusBadge status={item.stok_status} /></td>
-                                        <td className="px-5 py-3.5">
-                                            <div className="flex items-center justify-end gap-1">
+                                        {canManageItems && (
+                                            <td className="px-5 py-3.5">
+                                                <div className="flex items-center justify-end gap-1">
                                                 <button
                                                     onClick={() => openEdit(item)}
                                                     className="rounded-btn p-2 text-muted transition hover:bg-primary-soft hover:text-primary"
@@ -176,8 +184,9 @@ export default function BarangIndex({ items, filters, options }) {
                                                 >
                                                     <Trash2 className="h-4 w-4" />
                                                 </button>
-                                            </div>
-                                        </td>
+                                                </div>
+                                            </td>
+                                        )}
                                     </tr>
                                 ))}
                             </tbody>
@@ -188,7 +197,7 @@ export default function BarangIndex({ items, filters, options }) {
 
             <Pagination links={items.links} />
 
-            <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editing ? 'Edit Barang' : 'Tambah Barang'}>
+            {canManageItems && <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editing ? 'Edit Barang' : 'Tambah Barang'}>
                 <form onSubmit={submit} className="space-y-4">
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <FormInput label="Kode Barang" value={form.data.kode} onChange={(e) => form.setData('kode', e.target.value)} error={form.errors.kode} placeholder="ATK-001" />
@@ -224,15 +233,15 @@ export default function BarangIndex({ items, filters, options }) {
                         </Button>
                     </div>
                 </form>
-            </Modal>
+            </Modal>}
 
-            <ConfirmModal
+            {canManageItems && <ConfirmModal
                 open={!!deleting}
                 onClose={() => setDeleting(null)}
                 onConfirm={confirmDelete}
                 title="Hapus Barang"
                 message={`Barang "${deleting?.nama}" akan dihapus. Tindakan ini tidak dapat dibatalkan.`}
-            />
+            />}
         </AuthenticatedLayout>
     );
 }

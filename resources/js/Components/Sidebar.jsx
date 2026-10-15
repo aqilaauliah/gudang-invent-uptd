@@ -25,36 +25,43 @@ const navigation = [
     {
         label: 'INVENTORY',
         items: [
-            { label: 'Data Barang', href: '/barang', icon: Package, match: '/barang' },
-            { label: 'Persediaan', href: '/persediaan', icon: Boxes, match: '/persediaan' },
-            { label: 'Barang Masuk', href: '/barang-masuk', icon: PackagePlus, match: '/barang-masuk' },
-            { label: 'Barang Keluar', href: '/barang-keluar', icon: PackageMinus, match: '/barang-keluar' },
-            { label: 'Mutasi Barang', href: '/mutasi', icon: ArrowLeftRight, match: '/mutasi' },
+            { label: 'Data Barang', href: '/barang', icon: Package, match: '/barang', permission: 'view-items' },
+            { label: 'Persediaan', href: '/persediaan', icon: Boxes, match: '/persediaan', permission: 'view-stocks' },
+            { label: 'Barang Masuk', href: '/barang-masuk', icon: PackagePlus, match: '/barang-masuk', permission: 'manage-transactions' },
+            { label: 'Barang Keluar', href: '/barang-keluar', icon: PackageMinus, match: '/barang-keluar', permission: 'manage-transactions' },
+            { label: 'Mutasi Barang', href: '/mutasi', icon: ArrowLeftRight, match: '/mutasi', permission: 'manage-transactions' },
         ],
     },
     {
         label: 'ASSET',
         items: [
-            { label: 'Inventaris / Aset', href: '/aset', icon: MonitorSmartphone, match: '/aset' },
-            { label: 'Lokasi', href: '/lokasi', icon: MapPin, match: '/lokasi' },
+            { label: 'Inventaris / Aset', href: '/aset', icon: MonitorSmartphone, match: '/aset', permission: 'view-assets' },
+            { label: 'Lokasi', href: '/lokasi', icon: MapPin, match: '/lokasi', permission: 'view-locations' },
         ],
     },
     {
         label: 'REPORT',
-        items: [{ label: 'Laporan', href: '/laporan', icon: FileText, match: '/laporan' }],
+        items: [{ label: 'Laporan', href: '/laporan', icon: FileText, match: '/laporan', permission: 'view-reports' }],
     },
     {
         label: 'SYSTEM',
         items: [
-            { label: 'Pengguna', href: '/pengguna', icon: Users, match: '/pengguna' },
-            { label: 'Aktivitas', href: '/aktivitas', icon: History, match: '/aktivitas' },
+            { label: 'Pengguna', href: '/pengguna', icon: Users, match: '/pengguna', permission: 'manage-users' },
+            { label: 'Aktivitas', href: '/aktivitas', icon: History, match: '/aktivitas', permission: 'view-activities' },
             { label: 'Pengaturan', href: '/profile', icon: Settings, match: '/profile' },
         ],
     },
 ];
 
 export default function Sidebar({ open, onClose }) {
-    const { url } = usePage();
+    const { url, props } = usePage();
+    const permissions = props.auth?.permissions ?? [];
+    const visibleNavigation = navigation
+        .map((group) => ({
+            ...group,
+            items: group.items.filter((item) => !item.permission || permissions.includes(item.permission)),
+        }))
+        .filter((group) => group.items.length > 0);
 
     return (
         <>
@@ -90,7 +97,7 @@ export default function Sidebar({ open, onClose }) {
                 </div>
 
                 <nav className="flex-1 overflow-y-auto px-3 py-4">
-                    {navigation.map((group) => (
+                    {visibleNavigation.map((group) => (
                         <div key={group.label} className="mb-5">
                             <p className="px-3 pb-2 text-[11px] font-semibold tracking-wider text-white/40">
                                 {group.label}

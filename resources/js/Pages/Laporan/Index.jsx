@@ -1,4 +1,4 @@
-import { Head, router } from '@inertiajs/react';
+import { Head, router, usePage } from '@inertiajs/react';
 import { FileSpreadsheet, FileText, Download } from 'lucide-react';
 import {
     ResponsiveContainer,
@@ -31,6 +31,9 @@ const TYPES = [
 const COLORS = ['#0B1F3A', '#2563EB', '#F5B700', '#16A34A', '#64748B'];
 
 export default function LaporanIndex({ type, title, dari, sampai, tahun, tahunOptions, charts, headings, rows }) {
+    const { auth } = usePage().props;
+    const canExportReports = auth.permissions?.includes('export-reports') ?? false;
+
     function apply(field, value) {
         const params = { type, dari, sampai, tahun };
         if (field === 'tahun') {
@@ -59,15 +62,22 @@ export default function LaporanIndex({ type, title, dari, sampai, tahun, tahunOp
         <AuthenticatedLayout>
             <Head title="Laporan" />
 
-            <PageHeader title="Laporan" description="Pantau dan ekspor laporan persediaan & inventaris.">
-                <Button variant="secondary" external href={exportUrl('pdf')}>
-                    <FileText className="h-4 w-4" />
-                    Export PDF
-                </Button>
-                <Button external href={exportUrl('excel')}>
-                    <FileSpreadsheet className="h-4 w-4" />
-                    Export Excel
-                </Button>
+            <PageHeader
+                title="Laporan"
+                description={canExportReports ? 'Pantau dan ekspor laporan persediaan & inventaris.' : 'Pantau laporan operasional persediaan & inventaris.'}
+            >
+                {canExportReports && (
+                    <>
+                        <Button variant="secondary" external href={exportUrl('pdf')}>
+                            <FileText className="h-4 w-4" />
+                            Export PDF
+                        </Button>
+                        <Button external href={exportUrl('excel')}>
+                            <FileSpreadsheet className="h-4 w-4" />
+                            Export Excel
+                        </Button>
+                    </>
+                )}
             </PageHeader>
 
             <div className="mb-6 flex flex-col gap-3">

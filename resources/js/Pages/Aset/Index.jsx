@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import { Plus, Search, Pencil, Trash2, Eye, MonitorSmartphone } from 'lucide-react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import PageHeader from '@/Components/PageHeader';
@@ -10,6 +10,8 @@ import EmptyState from '@/Components/EmptyState';
 import { KondisiBadge, Badge } from '@/Components/StatusBadge';
 
 export default function AsetIndex({ assets, filters, options }) {
+    const { auth } = usePage().props;
+    const canManageAssets = auth.permissions?.includes('manage-assets') ?? false;
     const [deleting, setDeleting] = useState(null);
 
     function applyFilter(key, value) {
@@ -32,10 +34,12 @@ export default function AsetIndex({ assets, filters, options }) {
             <Head title="Inventaris / Aset" />
 
             <PageHeader title="Inventaris / Aset" description="Kelola aset kantor secara individual.">
-                <Button href="/aset/create">
-                    <Plus className="h-4 w-4" />
-                    Tambah Aset
-                </Button>
+                {canManageAssets && (
+                    <Button href="/aset/create">
+                        <Plus className="h-4 w-4" />
+                        Tambah Aset
+                    </Button>
+                )}
             </PageHeader>
 
             <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -73,9 +77,9 @@ export default function AsetIndex({ assets, filters, options }) {
 
             {assets.data.length === 0 ? (
                 <EmptyState
-                    description="Belum ada aset yang terdaftar. Tambahkan aset untuk mulai mengelola inventaris."
-                    actionLabel="+ Tambah Aset"
-                    actionHref="/aset/create"
+                    description="Belum ada aset yang terdaftar."
+                    actionLabel={canManageAssets ? '+ Tambah Aset' : undefined}
+                    actionHref={canManageAssets ? '/aset/create' : undefined}
                 />
             ) : (
                 <>
@@ -122,12 +126,16 @@ export default function AsetIndex({ assets, filters, options }) {
                                                 <Link href={`/aset/${asset.id}`} className="rounded-btn p-2 text-muted transition hover:bg-surface hover:text-ink" title="Lihat">
                                                     <Eye className="h-4 w-4" />
                                                 </Link>
-                                                <Link href={`/aset/${asset.id}/edit`} className="rounded-btn p-2 text-muted transition hover:bg-primary-soft hover:text-primary" title="Edit">
-                                                    <Pencil className="h-4 w-4" />
-                                                </Link>
-                                                <button onClick={() => setDeleting(asset)} className="rounded-btn p-2 text-muted transition hover:bg-danger-soft hover:text-danger" title="Hapus">
-                                                    <Trash2 className="h-4 w-4" />
-                                                </button>
+                                                {canManageAssets && (
+                                                    <>
+                                                        <Link href={`/aset/${asset.id}/edit`} className="rounded-btn p-2 text-muted transition hover:bg-primary-soft hover:text-primary" title="Edit">
+                                                            <Pencil className="h-4 w-4" />
+                                                        </Link>
+                                                        <button onClick={() => setDeleting(asset)} className="rounded-btn p-2 text-muted transition hover:bg-danger-soft hover:text-danger" title="Hapus">
+                                                            <Trash2 className="h-4 w-4" />
+                                                        </button>
+                                                    </>
+                                                )}
                                             </div>
                                         </td>
                                     </tr>
@@ -158,8 +166,12 @@ export default function AsetIndex({ assets, filters, options }) {
                                     <Badge tone="gray">{asset.status}</Badge>
                                     <div className="flex items-center gap-1">
                                         <Link href={`/aset/${asset.id}`} className="rounded-btn p-2 text-muted hover:bg-surface"><Eye className="h-4 w-4" /></Link>
-                                        <Link href={`/aset/${asset.id}/edit`} className="rounded-btn p-2 text-muted hover:bg-primary-soft hover:text-primary"><Pencil className="h-4 w-4" /></Link>
-                                        <button onClick={() => setDeleting(asset)} className="rounded-btn p-2 text-muted hover:bg-danger-soft hover:text-danger"><Trash2 className="h-4 w-4" /></button>
+                                        {canManageAssets && (
+                                            <>
+                                                <Link href={`/aset/${asset.id}/edit`} className="rounded-btn p-2 text-muted hover:bg-primary-soft hover:text-primary"><Pencil className="h-4 w-4" /></Link>
+                                                <button onClick={() => setDeleting(asset)} className="rounded-btn p-2 text-muted hover:bg-danger-soft hover:text-danger"><Trash2 className="h-4 w-4" /></button>
+                                            </>
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -170,13 +182,13 @@ export default function AsetIndex({ assets, filters, options }) {
 
             <Pagination links={assets.links} />
 
-            <ConfirmModal
+            {canManageAssets && <ConfirmModal
                 open={!!deleting}
                 onClose={() => setDeleting(null)}
                 onConfirm={confirmDelete}
                 title="Hapus Aset"
                 message={`Aset "${deleting?.nama}" akan dihapus. Tindakan ini tidak dapat dibatalkan.`}
-            />
+            />}
         </AuthenticatedLayout>
     );
 }
