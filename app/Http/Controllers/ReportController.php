@@ -139,8 +139,37 @@ class ReportController extends Controller
         $data = $this->buildReportData($request);
 
         if ($format === 'pdf') {
+            $selectedColumns = $request->input('columns', []);
+            $columnIndexes = array_values(array_filter(
+                array_map('intval', $selectedColumns),
+                fn (int $index) => $index >= 0 && $index < count($data['headings']),
+            ));
+            $columnIndexes = $columnIndexes === [] ? range(0, count($data['headings']) - 1) : array_values(array_unique($columnIndexes));
+            $data['selectedHeadings'] = array_map(fn (int $index) => $data['headings'][$index], $columnIndexes);
+            $data['selectedRows'] = array_map(
+                fn (array $row) => array_map(fn (int $index) => $row[$index] ?? null, $columnIndexes),
+                $data['rows'],
+            );
+            $data['orientation'] = $request->input('orientation') === 'portrait' ? 'portrait' : 'landscape';
+            $data['signatureName'] = $request->input('signature_name', $data['signatureName']);
+            $data['signatureTitle'] = $request->input('signature_title', $data['signatureTitle']);
+            $data['signatureNip'] = $request->input('signature_nip', '');
+
+            activity()
+                ->causedBy($request->user())
+                ->withProperties([
+                    'type' => 'ekspor_laporan_pdf',
+                    'kategori' => $data['type'],
+                    'jumlah' => count($data['rows']),
+                    'dari' => $data['dari'],
+                    'sampai' => $data['sampai'],
+                    'columns' => $columnIndexes,
+                    'orientation' => $data['orientation'],
+                ])
+                ->log("Mengekspor {$data['title']} ke PDF");
+
             return Pdf::loadView('exports.report', $data)
-                ->setPaper('a4', 'landscape')
+                ->setPaper('a4', $data['orientation'])
                 ->download($data['filename'].'.pdf');
         }
 
@@ -181,6 +210,15 @@ class ReportController extends Controller
             'charts' => $this->charts($dari, $sampai),
             'headings' => $this->headings($type),
             'rows' => $this->rows($type, $dari, $sampai),
+            'columnOptions' => array_map(
+                fn (string $heading, int $index) => ['value' => (string) $index, 'label' => $heading],
+                $this->headings($type),
+                array_keys($this->headings($type)),
+            ),
+            'logo' => $this->assetReportLogo(),
+            'printedAt' => now(),
+            'signatureName' => $request->user()?->name ?? 'Admin',
+            'signatureTitle' => 'Admin',
         ];
     }
 
@@ -266,7 +304,7 @@ class ReportController extends Controller
                 if ($type === 'mutasi') {
                     return [
                         $t->nomor,
-                        $t->tanggal->toDateString(),
+                        $t->tanggal->locale('id')->translatedFormat('d F Y'),
                         $t->item->kode,
                         $t->item->nama,
                         $t->jumlah,
@@ -280,7 +318,7 @@ class ReportController extends Controller
                 if ($type === 'masuk') {
                     return [
                         $t->nomor,
-                        $t->tanggal->toDateString(),
+                        $t->tanggal->locale('id')->translatedFormat('d F Y'),
                         $t->item->kode,
                         $t->item->nama,
                         $t->jumlah,
@@ -294,7 +332,7 @@ class ReportController extends Controller
 
                 return [
                     $t->nomor,
-                    $t->tanggal->toDateString(),
+                    $t->tanggal->locale('id')->translatedFormat('d F Y'),
                     $t->item->kode,
                     $t->item->nama,
                     $t->jumlah,

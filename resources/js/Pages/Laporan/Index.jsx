@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Head, router, usePage } from '@inertiajs/react';
 import { FileSpreadsheet, FileText, Download } from 'lucide-react';
 import {
@@ -18,6 +19,7 @@ import PageHeader from '@/Components/PageHeader';
 import Card from '@/Components/Card';
 import Button from '@/Components/Button';
 import EmptyState from '@/Components/EmptyState';
+import Modal from '@/Components/Modal';
 
 const TYPES = [
     { value: 'persediaan', label: 'Persediaan' },
@@ -30,9 +32,17 @@ const TYPES = [
 
 const COLORS = ['#0B1F3A', '#2563EB', '#F5B700', '#16A34A', '#64748B'];
 
-export default function LaporanIndex({ type, title, dari, sampai, tahun, tahunOptions, charts, headings, rows }) {
+export default function LaporanIndex({ type, title, dari, sampai, tahun, tahunOptions, charts, headings, rows, columnOptions }) {
     const { auth } = usePage().props;
     const canExportReports = auth.permissions?.includes('export-reports') ?? false;
+    const [exportOpen, setExportOpen] = useState(false);
+    const [exportConfig, setExportConfig] = useState({
+        columns: columnOptions.map((column) => column.value),
+        orientation: 'landscape',
+        signature_name: auth.user?.name ?? '',
+        signature_title: 'Admin',
+        signature_nip: '',
+    });
 
     function apply(field, value) {
         const params = { type, dari, sampai, tahun };
@@ -49,13 +59,31 @@ export default function LaporanIndex({ type, title, dari, sampai, tahun, tahunOp
         });
     }
 
-    function exportUrl(format) {
+    function exportUrl(format, extra = {}) {
         const params = new URLSearchParams();
         params.set('type', type);
         if (tahun) params.set('tahun', tahun);
         if (dari) params.set('dari', dari);
         if (sampai) params.set('sampai', sampai);
+        Object.entries(extra).forEach(([key, value]) => {
+            if (value) params.set(key, value);
+        });
         return `/laporan/export/${format}?${params.toString()}`;
+    }
+
+    function exportPdf() {
+        const params = new URLSearchParams();
+        params.set('type', type);
+        if (tahun) params.set('tahun', tahun);
+        if (dari) params.set('dari', dari);
+        if (sampai) params.set('sampai', sampai);
+        exportConfig.columns.forEach((column) => params.append('columns[]', column));
+        params.set('orientation', exportConfig.orientation);
+        params.set('signature_name', exportConfig.signature_name);
+        params.set('signature_title', exportConfig.signature_title);
+        params.set('signature_nip', exportConfig.signature_nip);
+        window.location.href = `/laporan/export/pdf?${params.toString()}`;
+        setExportOpen(false);
     }
 
     return (
@@ -68,7 +96,7 @@ export default function LaporanIndex({ type, title, dari, sampai, tahun, tahunOp
             >
                 {canExportReports && (
                     <>
-                        <Button variant="secondary" external href={exportUrl('pdf')}>
+                        <Button variant="secondary" onClick={() => setExportOpen(true)}>
                             <FileText className="h-4 w-4" />
                             Export PDF
                         </Button>
@@ -79,6 +107,53 @@ export default function LaporanIndex({ type, title, dari, sampai, tahun, tahunOp
                     </>
                 )}
             </PageHeader>
+
+            <Modal open={exportOpen} onClose={() => setExportOpen(false)} title={`Ekspor PDF - ${title}`} size="lg">
+                <div className="space-y-5">
+                    <div>
+                        <p className="mb-2 text-sm font-medium text-ink">Pilih kolom laporan</p>
+                        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                            {columnOptions.map((column) => (
+                                <label key={column.value} className="flex items-center gap-2 text-sm text-muted">
+                                    <input
+                                        type="checkbox"
+                                        checked={exportConfig.columns.includes(column.value)}
+                                        onChange={(e) => setExportConfig((current) => ({
+                                            ...current,
+                                            columns: e.target.checked
+                                                ? [...current.columns, column.value]
+                                                : current.columns.filter((value) => value !== column.value),
+                                        }))}
+                                        className="h-4 w-4 rounded border-line text-primary focus:ring-primary"
+                                    />
+                                    {column.label}
+                                </label>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <label className="text-sm font-medium text-ink">Orientasi
+                            <select value={exportConfig.orientation} onChange={(e) => setExportConfig({ ...exportConfig, orientation: e.target.value })} className="mt-1 h-11 w-full rounded-btn border border-line bg-white px-3.5 text-sm">
+                                <option value="portrait">Portrait</option>
+                                <option value="landscape">Landscape</option>
+                            </select>
+                        </label>
+                        <label className="text-sm font-medium text-ink">Nama penandatangan
+                            <input value={exportConfig.signature_name} onChange={(e) => setExportConfig({ ...exportConfig, signature_name: e.target.value })} className="mt-1 h-11 w-full rounded-btn border border-line px-3.5 text-sm" />
+                        </label>
+                        <label className="text-sm font-medium text-ink">Jabatan
+                            <input value={exportConfig.signature_title} onChange={(e) => setExportConfig({ ...exportConfig, signature_title: e.target.value })} className="mt-1 h-11 w-full rounded-btn border border-line px-3.5 text-sm" />
+                        </label>
+                        <label className="text-sm font-medium text-ink">NIP
+                            <input value={exportConfig.signature_nip} onChange={(e) => setExportConfig({ ...exportConfig, signature_nip: e.target.value })} className="mt-1 h-11 w-full rounded-btn border border-line px-3.5 text-sm" />
+                        </label>
+                    </div>
+                    <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
+                        <Button variant="secondary" onClick={() => setExportOpen(false)}>Batal</Button>
+                        <Button onClick={exportPdf} disabled={exportConfig.columns.length === 0}>Ekspor PDF</Button>
+                    </div>
+                </div>
+            </Modal>
 
             <div className="mb-6 flex flex-col gap-3">
                 <div className="flex flex-wrap gap-2">
