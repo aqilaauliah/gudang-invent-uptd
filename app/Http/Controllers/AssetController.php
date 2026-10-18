@@ -29,6 +29,7 @@ class AssetController extends Controller
                 'kategori',
                 'kondisi',
                 'status',
+                AllowedFilter::callback('lokasi', fn ($query, $value) => $query->where('location_id', $value)),
                 AllowedFilter::callback('tahun_dari', fn ($query, $value) => $query->where('tahun_perolehan', '>=', (int) substr($value, 0, 4))),
                 AllowedFilter::callback('tahun_sampai', fn ($query, $value) => $query->where('tahun_perolehan', '<=', (int) substr($value, 0, 4))),
                 AllowedFilter::callback('search', function ($query, $value) {

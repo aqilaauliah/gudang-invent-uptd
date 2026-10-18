@@ -10,6 +10,8 @@ use App\Models\Location;
 use App\Models\Transaction;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\File;
 use Inertia\Inertia;
 use Inertia\Response;
 use Maatwebsite\Excel\Facades\Excel;
@@ -17,6 +19,116 @@ use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class ReportController extends Controller
 {
+    public function exportAssetsPdf(Request $request): SymfonyResponse|RedirectResponse
+    {
+        $filters = $request->input('filter', []);
+        $assets = $this->filteredAssets($filters);
+
+        if ($assets->isEmpty()) {
+            return redirect()->route('aset.index')
+                ->with('flash_type', 'warning')
+                ->with('flash_message', 'Tidak ada data aset yang sesuai dengan filter aktif.');
+        }
+
+        $columns = $request->input('columns', []);
+        $allowedColumns = array_keys($this->assetColumnLabels());
+        $columns = array_values(array_intersect($columns, $allowedColumns));
+        if ($columns === []) {
+            $columns = ['kode', 'nama', 'kategori', 'merk', 'no_seri', 'lokasi', 'penanggung_jawab', 'kondisi', 'status', 'tanggal_perolehan'];
+        }
+
+        $orientation = $request->input('orientation') === 'landscape' ? 'landscape' : 'portrait';
+        $signature = [
+            'name' => $request->input('signature_name', $request->user()->name),
+            'title' => $request->input('signature_title', ''),
+            'nip' => $request->input('signature_nip', ''),
+        ];
+
+        $dari = $filters['tahun_dari'] ?? null;
+        $sampai = $filters['tahun_sampai'] ?? null;
+        $data = [
+            'assets' => $assets,
+            'columns' => $columns,
+            'columnLabels' => $this->assetColumnLabels(),
+            'orientation' => $orientation,
+            'period' => $dari && $sampai ? $this->formatReportDate($dari).' s/d '.$this->formatReportDate($sampai) : ($dari ? 'Mulai '.$this->formatReportDate($dari) : ($sampai ? 'Sampai '.$this->formatReportDate($sampai) : 'Semua Periode')),
+            'signature' => $signature,
+            'printedBy' => $request->user()->name,
+            'logo' => $this->assetReportLogo(),
+            'printedAt' => now(),
+            'conditionSummary' => $assets->groupBy('kondisi')->map->count(),
+        ];
+
+        activity()
+            ->causedBy($request->user())
+            ->withProperties([
+                'type' => 'ekspor_laporan_aset_pdf',
+                'jumlah' => $assets->count(),
+                'filter' => $filters,
+                'columns' => $columns,
+                'orientation' => $orientation,
+            ])
+            ->log('Mengekspor laporan data inventaris/aset ke PDF');
+
+        return Pdf::loadView('exports.asset-report', $data)
+            ->setPaper('a4', $orientation)
+            ->download('laporan-aset-'.now()->format('Ymd').'.pdf');
+    }
+
+    private function filteredAssets(array $filters)
+    {
+        return Asset::with('location')
+            ->when($filters['kategori'] ?? null, fn ($q, $value) => $q->where('kategori', $value))
+            ->when($filters['kondisi'] ?? null, fn ($q, $value) => $q->where('kondisi', $value))
+            ->when($filters['lokasi'] ?? null, fn ($q, $value) => $q->where('location_id', $value))
+            ->when($filters['tahun_dari'] ?? null, fn ($q, $value) => $q->where('tahun_perolehan', '>=', (int) substr($value, 0, 4)))
+            ->when($filters['tahun_sampai'] ?? null, fn ($q, $value) => $q->where('tahun_perolehan', '<=', (int) substr($value, 0, 4)))
+            ->when($filters['search'] ?? null, function ($q, $value) {
+                $q->where(function ($query) use ($value) {
+                    $query->where('kode', 'like', "%{$value}%")
+                        ->orWhere('nama', 'like', "%{$value}%")
+                        ->orWhere('merk', 'like', "%{$value}%")
+                        ->orWhere('no_seri', 'like', "%{$value}%");
+                });
+            })
+            ->orderBy('kode')
+            ->get();
+    }
+
+    private function assetColumnLabels(): array
+    {
+        return [
+            'kode' => 'Kode Inventaris',
+            'nama' => 'Nama',
+            'kategori' => 'Kategori',
+            'merk' => 'Merk',
+            'no_seri' => 'No. Seri',
+            'lokasi' => 'Lokasi',
+            'penanggung_jawab' => 'Penanggung Jawab',
+            'kondisi' => 'Kondisi',
+            'status' => 'Status',
+            'tanggal_perolehan' => 'Tanggal Perolehan',
+        ];
+    }
+
+    private function assetReportLogo(): string
+    {
+        $path = public_path('image/logo-jawabarat.png');
+        if (! File::exists($path)) {
+            return '';
+        }
+
+        return 'data:image/png;base64,'.base64_encode(File::get($path));
+    }
+
+    private function formatReportDate(?string $date): string
+    {
+        if (! $date) {
+            return '';
+        }
+
+        return \Illuminate\Support\Carbon::parse($date)->locale('id')->translatedFormat('d F Y');
+    }
     public function index(Request $request): Response
     {
         return Inertia::render('Laporan/Index', $this->buildReportData($request));
