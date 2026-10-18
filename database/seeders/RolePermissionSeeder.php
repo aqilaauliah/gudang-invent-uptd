@@ -25,6 +25,8 @@ class RolePermissionSeeder extends Seeder
             'export-reports',
             'manage-users',
             'view-activities',
+            'update-asset-condition',
+            'manage-asset-mutations',
         ];
 
         foreach ($permissions as $permission) {
@@ -41,6 +43,8 @@ class RolePermissionSeeder extends Seeder
             'manage-transactions',
             'view-assets',
             'view-locations',
+            'update-asset-condition',
+            'manage-asset-mutations',
         ]);
     }
 }

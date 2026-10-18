@@ -46,4 +46,9 @@ class Asset extends Model
     {
         return $this->hasMany(AssetHistory::class)->orderByDesc('tanggal')->orderByDesc('id');
     }
+
+    public function mutations(): HasMany
+    {
+        return $this->hasMany(AssetMutation::class)->orderByDesc('tanggal')->orderByDesc('id');
+    }
 }

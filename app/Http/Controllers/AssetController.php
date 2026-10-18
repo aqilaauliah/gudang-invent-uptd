@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Concerns\FlashesMessages;
 use App\Http\Requests\StoreAssetRequest;
 use App\Http\Requests\UpdateAssetRequest;
+use App\Http\Requests\UpdateAssetConditionRequest;
 use App\Models\Asset;
 use App\Models\AssetHistory;
 use App\Models\Location;
@@ -21,12 +22,15 @@ class AssetController extends Controller
 
     public function index(): Response
     {
+        $filterValues = request()->input('filter', []);
         $assets = QueryBuilder::for(Asset::class)
             ->with('location')
             ->allowedFilters(
                 'kategori',
                 'kondisi',
                 'status',
+                AllowedFilter::callback('tahun_dari', fn ($query, $value) => $query->where('tahun_perolehan', '>=', (int) substr($value, 0, 4))),
+                AllowedFilter::callback('tahun_sampai', fn ($query, $value) => $query->where('tahun_perolehan', '<=', (int) substr($value, 0, 4))),
                 AllowedFilter::callback('search', function ($query, $value) {
                     $query->where(function ($q) use ($value) {
                         $q->where('kode', 'like', "%{$value}%")
@@ -43,7 +47,7 @@ class AssetController extends Controller
 
         return Inertia::render('Aset/Index', [
             'assets' => $assets,
-            'filters' => request()->only(['search', 'kategori', 'kondisi', 'status']),
+            'filters' => $filterValues,
         ]);
     }
 
@@ -62,6 +66,7 @@ class AssetController extends Controller
     public function show(Asset $asset): Response
     {
         $asset->load(['location', 'histories.user']);
+        $asset->load(['mutations.fromLocation', 'mutations.toLocation', 'mutations.recorder']);
 
         return Inertia::render('Aset/Show', [
             'asset' => $asset,
@@ -73,6 +78,15 @@ class AssetController extends Controller
                 'status' => $h->status,
                 'catatan' => $h->catatan,
                 'user' => $h->user?->name,
+            ]),
+            'mutations' => $asset->mutations->map(fn ($mutation) => [
+                'id' => $mutation->id,
+                'tanggal' => $mutation->tanggal->toDateString(),
+                'dari' => $mutation->fromLocation?->nama,
+                'ke' => $mutation->toLocation?->nama,
+                'pj_baru' => $mutation->pj_baru,
+                'keterangan' => $mutation->keterangan,
+                'user' => $mutation->recorder?->name,
             ]),
         ]);
     }
@@ -167,6 +181,39 @@ class AssetController extends Controller
             ->log("Mengubah data aset \"{$asset->nama}\"");
 
         return redirect()->route('aset.index');
+    }
+
+    public function updateCondition(UpdateAssetConditionRequest $request, Asset $asset): RedirectResponse
+    {
+        $data = $request->validated();
+        $oldCondition = $asset->kondisi;
+
+        if ($request->hasFile('foto')) {
+            if ($asset->foto) {
+                Storage::disk('public')->delete($asset->foto);
+            }
+            $data['foto'] = $request->file('foto')->store('assets', 'public');
+        }
+
+        $asset->update($data);
+
+        if ($oldCondition !== $asset->kondisi || array_key_exists('foto', $data)) {
+            $this->recordHistory($asset, [
+                'kondisi' => $asset->kondisi,
+                'catatan' => $oldCondition !== $asset->kondisi
+                    ? "Kondisi berubah menjadi {$asset->kondisi}."
+                    : 'Foto kondisi aset diperbarui.',
+            ]);
+        }
+
+        activity()
+            ->causedBy($request->user())
+            ->withProperties(['type' => 'ubah_kondisi_aset', 'kode' => $asset->kode, 'kondisi' => $asset->kondisi])
+            ->log("Memperbarui kondisi aset \"{$asset->nama}\"");
+
+        $this->flash('success', "Kondisi aset \"{$asset->nama}\" berhasil diperbarui.");
+
+        return redirect()->back();
     }
 
     public function destroy(Asset $asset): RedirectResponse

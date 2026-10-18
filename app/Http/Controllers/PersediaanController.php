@@ -23,12 +23,22 @@ class PersediaanController extends Controller
                 'stok_minimum' => $item->stok_minimum,
                 'total_stock' => $item->total_stock,
                 'stok_status' => $item->stok_status,
+                'last_transaction_date' => $item->transactions()->max('tanggal'),
                 'stocks' => $item->stocks->map(fn ($s) => [
                     'location_id' => $s->location_id,
                     'location_nama' => $s->location?->nama,
                     'jumlah' => $s->jumlah,
                 ])->sortBy('location_nama')->values(),
-            ]);
+            ])
+            ->filter(function (array $item) use ($request): bool {
+                $from = $request->input('tanggal_dari');
+                $to = $request->input('tanggal_sampai');
+                $lastDate = $item['last_transaction_date'];
+
+                return (!$from || ($lastDate && $lastDate >= $from))
+                    && (!$to || ($lastDate && $lastDate <= $to));
+            })
+            ->values();
 
         $summary = [
             'total_barang' => $items->count(),
@@ -40,6 +50,8 @@ class PersediaanController extends Controller
         return Inertia::render('Persediaan/Index', [
             'items' => $items,
             'summary' => $summary,
+            'filters' => $request->only(['tanggal_dari', 'tanggal_sampai']),
+            'locations' => \App\Models\Location::orderBy('nama')->get(['id', 'nama']),
         ]);
     }
 }

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\AssetController;
+use App\Http\Controllers\AssetMutationController;
 use App\Http\Controllers\BarangKeluarController;
 use App\Http\Controllers\BarangMasukController;
 use App\Http\Controllers\DashboardController;
@@ -60,6 +61,14 @@ Route::middleware('auth')->group(function () {
         Route::get('/aset/{asset}/edit', [AssetController::class, 'edit'])->name('aset.edit');
         Route::put('/aset/{asset}', [AssetController::class, 'update'])->name('aset.update');
         Route::delete('/aset/{asset}', [AssetController::class, 'destroy'])->name('aset.destroy');
+    });
+    Route::patch('/aset/{asset}/kondisi', [AssetController::class, 'updateCondition'])
+        ->middleware('can:update-asset-condition')
+        ->name('aset.condition.update');
+    Route::middleware('can:manage-asset-mutations')->group(function () {
+        Route::get('/mutasi-aset', [AssetMutationController::class, 'index'])->name('aset.mutasi.index');
+        Route::get('/mutasi-aset/create', [AssetMutationController::class, 'create'])->name('aset.mutasi.create');
+        Route::post('/mutasi-aset/{asset}', [AssetMutationController::class, 'store'])->name('aset.mutasi.store');
     });
     Route::middleware('can:view-assets')->group(function () {
         Route::get('/aset', [AssetController::class, 'index'])->name('aset.index');

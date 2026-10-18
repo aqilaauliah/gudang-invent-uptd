@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import { Search, MapPin, PackageCheck, PackageSearch, PackageX, Boxes } from 'lucide-react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import PageHeader from '@/Components/PageHeader';
@@ -7,11 +7,13 @@ import Card from '@/Components/Card';
 import { StatusBadge } from '@/Components/StatusBadge';
 import EmptyState from '@/Components/EmptyState';
 
-export default function PersediaanIndex({ items, summary, locations }) {
+export default function PersediaanIndex({ items, summary, locations, filters = {} }) {
     const [search, setSearch] = useState('');
     const [kategori, setKategori] = useState('');
     const [lokasi, setLokasi] = useState('');
     const [status, setStatus] = useState('');
+    const [tanggalDari, setTanggalDari] = useState(filters.tanggal_dari ?? '');
+    const [tanggalSampai, setTanggalSampai] = useState(filters.tanggal_sampai ?? '');
 
     const kategoriList = useMemo(() => [...new Set(items.map((i) => i.kategori))].sort(), [items]);
 
@@ -28,6 +30,11 @@ export default function PersediaanIndex({ items, summary, locations }) {
             return matchSearch && matchKategori && matchStatus && matchLokasi;
         });
     }, [items, search, kategori, lokasi, status]);
+
+    function applyDates(key, value) {
+        const next = { ...filters, [key]: value || undefined };
+        router.get(route('persediaan.index'), next, { preserveState: true, replace: true });
+    }
 
     const summaryCards = [
         { label: 'Total Barang', value: summary.total_barang, icon: Boxes, tone: 'blue' },
@@ -85,6 +92,9 @@ export default function PersediaanIndex({ items, summary, locations }) {
                     <option value="menipis">Menipis</option>
                     <option value="habis">Habis</option>
                 </select>
+                <input type="date" value={tanggalDari} onChange={(e) => { setTanggalDari(e.target.value); applyDates('tanggal_dari', e.target.value); }} className="h-11 rounded-btn border border-line bg-white px-3.5 text-sm focus:border-primary focus:outline-none" aria-label="Transaksi terakhir dari" />
+                <input type="date" value={tanggalSampai} onChange={(e) => { setTanggalSampai(e.target.value); applyDates('tanggal_sampai', e.target.value); }} className="h-11 rounded-btn border border-line bg-white px-3.5 text-sm focus:border-primary focus:outline-none" aria-label="Transaksi terakhir sampai" />
+                <button type="button" onClick={() => { setTanggalDari(''); setTanggalSampai(''); router.get(route('persediaan.index')); }} className="h-11 rounded-btn border border-line bg-white px-3.5 text-sm font-medium text-muted hover:bg-surface">Reset Filter</button>
             </div>
 
             {filtered.length === 0 ? (

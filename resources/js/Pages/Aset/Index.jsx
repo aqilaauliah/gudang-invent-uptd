@@ -15,7 +15,7 @@ export default function AsetIndex({ assets, filters, options }) {
     const [deleting, setDeleting] = useState(null);
 
     function applyFilter(key, value) {
-        router.get(route('aset.index'), { ...filters, [key]: value || undefined, page: undefined }, {
+        router.get(route('aset.index'), { filter: { ...filters, [key]: value || undefined }, page: undefined }, {
             preserveState: true,
             replace: true,
         });
@@ -73,6 +73,9 @@ export default function AsetIndex({ assets, filters, options }) {
                         <option key={s} value={s}>{s}</option>
                     ))}
                 </select>
+                <input type="date" value={filters.tahun_dari ?? ''} onChange={(e) => applyFilter('tahun_dari', e.target.value)} className="h-11 rounded-btn border border-line bg-white px-3.5 text-sm focus:border-primary focus:outline-none" aria-label="Perolehan dari" />
+                <input type="date" value={filters.tahun_sampai ?? ''} onChange={(e) => applyFilter('tahun_sampai', e.target.value)} className="h-11 rounded-btn border border-line bg-white px-3.5 text-sm focus:border-primary focus:outline-none" aria-label="Perolehan sampai" />
+                <button type="button" onClick={() => router.get(route('aset.index'))} className="h-11 rounded-btn border border-line bg-white px-3.5 text-sm font-medium text-muted hover:bg-surface">Reset Filter</button>
             </div>
 
             {assets.data.length === 0 ? (
