@@ -70,9 +70,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/mutasi-aset/create', [AssetMutationController::class, 'create'])->name('aset.mutasi.create');
         Route::post('/mutasi-aset/{asset}', [AssetMutationController::class, 'store'])->name('aset.mutasi.store');
     });
-    Route::get('/aset/export/pdf', [ReportController::class, 'exportAssetsPdf'])
-        ->middleware('can:export-asset-reports')
-        ->name('aset.export.pdf');
     Route::middleware('can:view-assets')->group(function () {
         Route::get('/aset', [AssetController::class, 'index'])->name('aset.index');
         Route::get('/aset/{asset}', [AssetController::class, 'show'])->name('aset.show');

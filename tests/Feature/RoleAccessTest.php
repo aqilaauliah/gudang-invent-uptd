@@ -75,14 +75,12 @@ class RoleAccessTest extends TestCase
         $this->actingAs($admin)->get('/aset/create')->assertOk();
     }
 
-    public function test_only_admin_can_export_asset_pdf(): void
+    public function test_asset_export_endpoint_is_removed(): void
     {
         $admin = User::factory()->create();
         $admin->assignRole('Admin');
-        $petugas = User::factory()->create();
-        $petugas->assignRole('Petugas Gudang');
 
-        $this->actingAs($petugas)->get('/aset/export/pdf')->assertForbidden();
-        $this->actingAs($admin)->get('/aset/export/pdf')->assertRedirect('/aset');
+        $this->actingAs($admin)->get('/aset/export/pdf')->assertNotFound();
     }
+
 }

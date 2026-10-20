@@ -27,7 +27,6 @@ class RolePermissionSeeder extends Seeder
             'view-activities',
             'update-asset-condition',
             'manage-asset-mutations',
-            'export-asset-reports',
         ];
 
         foreach ($permissions as $permission) {
