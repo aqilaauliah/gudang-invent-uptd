@@ -38,19 +38,6 @@ const TYPE_META = {
             ['petugas', 'Petugas'],
         ],
     },
-    pengambilan_kiosk: {
-        label: 'Pengambilan Mandiri',
-        tone: 'navy',
-        fields: [
-            ['nomor', 'No. Transaksi'],
-            ['tanggal', 'Tanggal Pengambilan'],
-            ['item', 'Nama Barang'],
-            ['jumlah', 'Jumlah'],
-            ['lokasi', 'Lokasi'],
-            ['nama_pengambil', 'Nama Pengambil'],
-            ['keperluan', 'Keperluan'],
-        ],
-    },
     mutasi: {
         label: 'Mutasi Barang',
         tone: 'blue',

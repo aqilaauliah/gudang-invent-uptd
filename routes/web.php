@@ -8,7 +8,6 @@ use App\Http\Controllers\BarangMasukController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmailChangeController;
 use App\Http\Controllers\ItemController;
-use App\Http\Controllers\KioskController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\MutasiController;
 use App\Http\Controllers\PersediaanController;
@@ -19,11 +18,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return redirect(auth()->check() ? route('dashboard') : route('login'));
-});
-
-Route::prefix('ambil-barang')->name('kiosk.')->group(function () {
-    Route::get('/', [KioskController::class, 'create'])->name('index');
-    Route::post('/', [KioskController::class, 'store'])->name('store');
 });
 
 Route::middleware('auth')->group(function () {

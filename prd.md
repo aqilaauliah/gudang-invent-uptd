@@ -1,4 +1,4 @@
-### Sistem Informasi Gudang dan Inventaris
+# INVENTRA (Inventory & Asset Management System)
 
 **UPTD Pengawasan Ketenagakerjaan Wilayah II Karawang**
 
@@ -6,153 +6,97 @@
 
 ## 1. Pendahuluan
 
-SIGUDIN (Sistem Informasi Gudang dan Inventaris) adalah sistem informasi berbasis web yang digunakan untuk mengelola data persediaan barang dan inventaris/aset milik UPTD Pengawasan Ketenagakerjaan Wilayah II Karawang.
+INVENTRA adalah sistem informasi berbasis web untuk mengelola persediaan barang dan inventaris/aset UPTD Pengawasan Ketenagakerjaan Wilayah II Karawang. Pengguna masuk ke aplikasi untuk mengakses fitur sesuai perannya.
 
-Sistem dirancang untuk membantu admin dalam melakukan pencatatan, pemantauan, dan pelaporan barang secara terstruktur.
+Alur utama aplikasi:
 
-Karakteristik utama sistem:
+1. Pengguna masuk ke INVENTRA; pengguna yang lupa kata sandi dapat meminta kode verifikasi melalui email untuk mengatur kata sandi baru.
+2. Setelah masuk, pengguna melihat dashboard dan menu yang tersedia sesuai izin akunnya.
+3. Petugas mengelola transaksi persediaan dan aset sesuai kewenangan, sedangkan Admin juga mengelola data master, pengguna, dan aktivitas.
+4. Pengguna memantau persediaan, lokasi, aset, dan laporan. Ekspor laporan hanya tersedia bagi pengguna yang memiliki izin.
+5. Pengguna dapat mengelola profil, mengganti kata sandi, serta mengganti email dengan kode verifikasi.
 
-* Barang tidak hanya ditempatkan pada satu lokasi.
-* Satu jenis barang dapat memiliki stok di beberapa lokasi.
-* Pengambilan barang tidak menggunakan sistem pengajuan atau approval.
-* Barang keluar langsung dicatat oleh admin.
-* Sistem dapat mendeteksi barang yang stoknya menipis.
-* Sistem dapat mencatat barang inventaris/aset secara individual.
-* Sistem menyediakan riwayat barang masuk, barang keluar, dan perpindahan lokasi.
-* Sistem menyediakan laporan yang dapat digunakan untuk kebutuhan administrasi dan monitoring.
+Persediaan dicatat per barang dan per lokasi. Barang keluar dicatat oleh petugas yang memiliki izin melalui aplikasi. Aset dicatat satu per satu dan memiliki riwayat kondisi serta perpindahan lokasi.
 
 ---
 
 ## 2. Tujuan Sistem
 
-SIGUDIN memiliki tujuan:
+INVENTRA bertujuan untuk:
 
-1. Mempermudah pengelolaan data barang dan inventaris.
-2. Mengetahui jumlah stok barang secara akurat.
-3. Mengetahui lokasi penyimpanan setiap barang.
-4. Mencatat barang masuk dan barang keluar.
-5. Mencatat perpindahan barang antar lokasi.
-6. Memberikan peringatan ketika stok barang mencapai batas minimum.
-7. Mempermudah pendataan inventaris/aset kantor.
-8. Mengetahui kondisi dan lokasi setiap aset.
-9. Menyediakan riwayat transaksi barang.
-10. Menyediakan laporan yang mudah dipahami dan dapat diekspor.
+1. Menyediakan alur terpusat untuk pencatatan persediaan dan inventaris/aset.
+2. Menampilkan stok barang secara keseluruhan maupun berdasarkan lokasi.
+3. Mencatat barang masuk, barang keluar, dan perpindahan stok antar lokasi.
+4. Menampilkan status stok aman, menipis, atau habis berdasarkan stok minimum.
+5. Mencatat identitas, kondisi, lokasi, dan riwayat aset.
+6. Menyediakan ringkasan dashboard dan laporan operasional.
+7. Mengatur akses fitur berdasarkan peran dan izin pengguna.
+8. Mendukung ekspor laporan ke Excel dan PDF bagi pengguna berizin.
+9. Mendukung pencatatan barang keluar tanpa proses pengajuan atau persetujuan.
 
 ---
 
 ## 3. Ruang Lingkup
 
-SIGUDIN terdiri dari dua bagian utama:
+INVENTRA mencakup modul persediaan, aset, lokasi, pelaporan, pengguna, aktivitas, dan pengaturan profil.
 
 ### 3.1 Persediaan / Inventory
 
-Digunakan untuk barang yang jumlahnya berubah berdasarkan transaksi masuk dan keluar.
+Digunakan untuk mengelola barang yang jumlahnya berubah akibat transaksi. Data barang mencakup kode, nama, kategori, satuan, stok minimum, deskripsi, dan status aktif/nonaktif.
 
-Contoh:
+Fitur yang tersedia:
 
-* Kertas
-* Pulpen
-* Map
-* Tinta printer
-* Spidol
-* ATK
-* Barang habis pakai lainnya
+* Melihat dan mengelola data barang sesuai izin.
+* Melihat stok per barang dan per lokasi.
+* Mencatat barang masuk dan barang keluar dengan nomor transaksi otomatis.
+* Memindahkan stok antar lokasi melalui transaksi mutasi.
+* Memantau status aman, menipis, dan habis.
+* Mencari serta memfilter data barang dan persediaan.
+* Melihat riwayat transaksi melalui laporan.
 
-Fitur:
-
-* Data barang
-* Kategori barang
-* Satuan
-* Stok
-* Stok minimum
-* Lokasi penyimpanan
-* Barang masuk
-* Barang keluar
-* Mutasi barang
-* Penyesuaian stok
-* Deteksi stok menipis
-* Riwayat transaksi
-* Laporan persediaan
+Kategori dan satuan merupakan atribut pada data barang, bukan modul pengelolaan terpisah. Penyesuaian stok manual belum tersedia pada alur aplikasi.
 
 ### 3.2 Inventaris / Aset
 
-Digunakan untuk barang/aset yang dimiliki dan digunakan dalam operasional kantor.
+Digunakan untuk mencatat aset secara individual. Data aset mencakup kode, nama, kategori, merk, tipe/model, nomor seri, tahun dan sumber perolehan, nilai perolehan, lokasi, penanggung jawab, kondisi, status, foto, dan keterangan.
 
-Contoh:
+Fitur yang tersedia:
 
-* Laptop
-* Komputer
-* Printer
-* Meja
-* Kursi
-* Lemari
-* Proyektor
-* AC
-* Peralatan kantor lainnya
-
-Fitur:
-
-* Data inventaris
-* Kode inventaris
-* Kategori aset
-* Merk
-* Tipe/model
-* Nomor seri
-* Tahun perolehan
-* Nilai perolehan
-* Lokasi
-* Penanggung jawab
-* Kondisi
-* Status
-* Foto aset
-* Riwayat lokasi
-* Riwayat kondisi
-* Laporan inventaris
+* Melihat, mencari, memfilter, dan mengelola data aset sesuai izin.
+* Melihat detail aset, foto, kondisi, status, lokasi, dan penanggung jawab.
+* Memperbarui kondisi aset sesuai izin, termasuk mengunggah foto kondisi.
+* Memindahkan aset ke lokasi lain dan mencatat penanggung jawab baru bila diperlukan.
+* Melihat riwayat perubahan serta riwayat mutasi aset.
+* Meninjau daftar aset pada setiap lokasi.
 
 ---
 
 ## 4. Pengguna Sistem
 
+Akses menu dan tindakan ditentukan oleh izin pada akun. Peran yang tersedia pada aplikasi adalah Admin dan Petugas Gudang.
+
 ### Admin
 
-Admin memiliki akses penuh terhadap sistem.
-Admin dapat:
-* Mengelola data barang.
-* Mengelola kategori.
-* Mengelola satuan.
-* Mengelola lokasi.
-* Mencatat barang masuk.
-* Mencatat barang keluar.
-* Melakukan mutasi barang.
-* Melakukan penyesuaian stok.
-* Mengelola inventaris/aset.
-* Melihat laporan.
-* Mengelola pengguna.
-* Melihat riwayat aktivitas.
+Admin memiliki izin penuh pada modul aplikasi. Admin dapat:
+
+* Melihat dashboard, persediaan, data barang, aset, lokasi, laporan, dan aktivitas.
+* Menambah, mengubah, dan menghapus data barang, aset, lokasi, dan pengguna.
+* Mencatat barang masuk, barang keluar, dan mutasi barang.
+* Memperbarui kondisi aset dan mencatat mutasi aset.
+* Mengekspor laporan ke Excel dan PDF.
+* Mengelola profil, email, dan kata sandi sendiri.
 
 ### Petugas Gudang
-Petugas Gudang memiliki akses terbatas untuk kebutuhan operasional harian.
-Petugas Gudang dapat:
-* Melihat dashboard ringkasan operasional.
-* Melihat data barang (hanya lihat).
-* Melihat persediaan/stok (hanya lihat).
-* Mencatat dan melihat barang masuk.
-* Mencatat dan melihat barang keluar.
-* Mencatat dan melihat mutasi barang (perpindahan barang).
-* Melihat data inventaris/aset (hanya lihat).
-* Melihat data lokasi (hanya lihat).
-* Melihat laporan operasional yang diperlukan.
-* Mengelola profil sendiri.
 
-Petugas Gudang tidak dapat:
-* Menambah, mengubah, atau menghapus data barang, aset, dan lokasi.
-* Melakukan penyesuaian stok.
-* Mengubah atau menghapus transaksi (barang masuk, barang keluar, mutasi) yang sudah disimpan.
-* Mengekspor laporan.
-* Mengelola pengguna dan peran.
-* Mengakses riwayat aktivitas.
+Petugas Gudang memiliki akses operasional sesuai izin yang diberikan. Petugas dapat:
 
-Sistem memiliki dua role: *Admin* dan *Petugas Gudang*.
+* Melihat dashboard, data barang, persediaan, aset, dan lokasi.
+* Mencatat barang masuk, barang keluar, dan mutasi barang.
+* Memperbarui kondisi aset serta mencatat mutasi aset.
+* Melihat laporan operasional yang diizinkan.
+* Mengelola profil, email, dan kata sandi sendiri.
+
+Petugas Gudang tidak memiliki izin untuk mengelola master data barang, aset, lokasi, atau pengguna, serta tidak dapat mengekspor laporan maupun melihat halaman aktivitas. Pengelolaan peran dan pemberian izin dilakukan melalui akun Admin.
 
 ---
 
@@ -160,183 +104,103 @@ Sistem memiliki dua role: *Admin* dan *Petugas Gudang*.
 
 ## 5.1 Dashboard
 
-Dashboard menjadi halaman utama setelah admin login.
+Dashboard adalah halaman utama bagi pengguna yang berhak mengaksesnya. Dashboard menampilkan:
 
-Dashboard menampilkan:
-
-* Total jenis barang.
-* Total stok.
-* Total inventaris.
-* Total lokasi.
-* Jumlah barang menipis.
-* Jumlah barang habis.
-* Jumlah inventaris bermasalah.
-* Aktivitas terbaru.
-* Peringatan stok menipis.
-* Grafik barang masuk dan keluar.
-* Distribusi barang berdasarkan lokasi.
-* Kondisi inventaris.
-
----
+* Total jenis barang dan total stok.
+* Total aset dan total lokasi.
+* Jumlah barang menipis, barang habis, dan aset dengan kondisi selain baik.
+* Grafik barang masuk dan keluar selama enam bulan terakhir.
+* Distribusi stok berdasarkan kategori dan lokasi.
+* Ringkasan kondisi aset.
+* Peringatan barang menipis dan habis dengan tautan menuju persediaan.
+* Sepuluh aktivitas terbaru bagi pengguna yang memiliki izin melihat aktivitas.
+* Tombol tambah barang bagi pengguna yang memiliki izin mengelola barang.
 
 ## 5.2 Master Data Barang
 
-Admin dapat menambahkan, mengubah, melihat, dan menghapus data barang.
+Data barang dapat dilihat oleh pengguna dengan izin melihat barang dan ditambah, diubah, atau dihapus oleh pengguna dengan izin mengelola barang.
 
 Data barang terdiri dari:
 
-* ID barang
-* Kode barang
+* Kode barang (unik)
 * Nama barang
 * Kategori
 * Satuan
 * Stok minimum
-* Deskripsi
-* Status aktif/nonaktif
+* Deskripsi (opsional)
+* Status aktif atau nonaktif
+
+Halaman data barang menyediakan pencarian berdasarkan kode atau nama, filter kategori dan status, informasi total stok serta status stok, dan paginasi.
 
 Contoh:
 
 ```text
-Kode       : ATK-001
-Nama       : Kertas A4
-Kategori   : ATK
-Satuan     : Rim
-Stok Min.  : 5
+Kode        : ATK-001
+Nama        : Kertas A4
+Kategori    : ATK
+Satuan      : Rim
+Stok Min.   : 5
+Status      : Aktif
 ```
-
----
 
 ## 5.3 Kategori Barang
 
-Admin dapat mengelola kategori barang.
+Kategori disimpan sebagai atribut pada data barang dan digunakan untuk mengelompokkan serta memfilter barang, termasuk pada ringkasan grafik dashboard. Tidak tersedia halaman khusus untuk mengelola daftar kategori; nilai kategori diisikan saat mengelola data barang.
 
-Contoh:
-
-* ATK
-* Elektronik
-* Perlengkapan Kantor
-* Kebersihan
-* Peralatan Pengawasan
-* Lainnya
-
----
+Contoh kategori: ATK, Elektronik, Perlengkapan Kantor, Kebersihan, Peralatan Pengawasan, dan Lainnya.
 
 ## 5.4 Satuan
 
-Admin dapat mengelola satuan barang.
+Satuan dicatat sebagai atribut pada setiap barang dan ditampilkan dalam data barang, transaksi, serta persediaan. Tidak tersedia halaman khusus untuk mengelola daftar satuan.
 
-Contoh:
-
-* Pcs
-* Rim
-* Box
-* Unit
-* Set
-* Botol
-* Buah
-
----
+Contoh: Pcs, Rim, Box, Unit, Set, Botol, dan Buah.
 
 ## 5.5 Lokasi Penyimpanan
 
-Sistem harus mendukung banyak lokasi.
+Sistem mendukung banyak lokasi. Pengguna berizin dapat melihat lokasi, sedangkan pengelolaan lokasi dibatasi untuk pengguna dengan izin yang sesuai.
 
-Contoh:
+Data lokasi mencakup nama, penanggung jawab, dan keterangan. Halaman daftar lokasi merangkum jumlah jenis barang, total stok, dan jumlah aset. Halaman detail lokasi menampilkan barang yang tersedia serta aset yang berada di lokasi tersebut.
 
-* Gudang Utama
-* Ruang Tata Usaha
-* Ruang Administrasi
-* Ruang Pengawasan
-* Ruang Kepala UPTD
-* Ruang Arsip
-* Ruang lainnya
-
-Satu barang dapat memiliki stok pada beberapa lokasi.
-
-Contoh:
-
-```text
-Pulpen
-
-Gudang Utama          : 20 pcs
-Ruang Administrasi    : 10 pcs
-Ruang Pengawasan      : 5 pcs
-
-Total                 : 35 pcs
-```
+Satu jenis barang dapat memiliki stok di beberapa lokasi. Stok di setiap lokasi diperbarui melalui transaksi barang masuk, barang keluar, dan mutasi.
 
 ---
 
 # 6. Barang Masuk
 
-Admin dapat mencatat barang yang masuk ke sistem.
-
-Data transaksi:
+Pengguna dengan izin mengelola transaksi dapat mencatat barang yang masuk. Formulir mencakup:
 
 * Tanggal
-* Nomor transaksi
+* Nomor transaksi yang dibuat otomatis oleh sistem
 * Barang
-* Jumlah
-* Satuan
+* Jumlah dan satuan
 * Lokasi tujuan
 * Sumber/supplier
 * Nomor dokumen
-* Keterangan
-* Admin pencatat
+* Keterangan (opsional)
 
-Setelah transaksi disimpan:
+Setelah transaksi berhasil disimpan, stok barang pada lokasi tujuan bertambah sesuai jumlah masuk. Transaksi tercatat untuk kebutuhan riwayat, laporan, dan aktivitas.
 
 ```text
-Stok lokasi = stok sebelumnya + jumlah masuk
+Stok lokasi setelah transaksi = stok sebelumnya + jumlah masuk
 ```
-
-Sistem juga membuat riwayat transaksi.
 
 ---
 
 # 7. Barang Keluar
 
-Barang keluar tidak menggunakan sistem pengajuan.
+Barang keluar tidak memerlukan pengajuan atau persetujuan. Pengguna berizin dapat mencatat pengambilan melalui halaman barang keluar setelah memilih tanggal, barang, lokasi asal, jumlah, pengambil, dan keperluan. Nomor transaksi dibuat otomatis; keterangan dapat ditambahkan.
 
-Admin dapat langsung mencatat barang yang diambil.
-
-Data transaksi:
-
-* Tanggal
-* Nomor transaksi
-* Barang
-* Lokasi asal
-* Jumlah
-* Pengambil
-* Keperluan
-* Keterangan
-* Admin pencatat
-
-Setelah transaksi disimpan:
+Sistem menampilkan stok lokasi terpilih dan menolak jumlah yang melebihi ketersediaan.
 
 ```text
-Stok lokasi = stok sebelumnya - jumlah keluar
-```
-
-Sistem harus melakukan validasi agar jumlah barang keluar tidak melebihi stok yang tersedia pada lokasi tersebut.
-
-Contoh:
-
-```text
-Stok Ruang Administrasi : 20 pcs
-Barang keluar           : 5 pcs
-Stok setelah transaksi  : 15 pcs
+Stok lokasi setelah transaksi = stok sebelumnya - jumlah keluar
 ```
 
 ---
 
 # 8. Deteksi Stok Menipis
 
-Setiap barang memiliki nilai `stok_minimum`.
-
-Sistem menghitung total stok barang dari seluruh lokasi.
-
-Status barang:
+Setiap barang memiliki nilai `stok_minimum`. Sistem menghitung total stok dari seluruh lokasi untuk menentukan status barang.
 
 ### Aman
 
@@ -364,85 +228,41 @@ Contoh:
 Pulpen
 Total stok    : 7 pcs
 Stok minimum  : 10 pcs
-Status        : MENIPIS
+Status        : Menipis
 ```
 
-Sistem menampilkan peringatan pada:
-
-* Dashboard
-* Halaman persediaan
-* Notifikasi
-* Laporan stok menipis
+Barang menipis dan habis ditampilkan pada ringkasan persediaan dan dashboard. Keduanya juga dapat dilihat pada jenis laporan Stok Menipis. Aplikasi tidak menampilkan notifikasi push atau email khusus untuk perubahan status stok.
 
 ---
 
 # 9. Mutasi Barang
 
-Mutasi digunakan untuk memindahkan stok dari satu lokasi ke lokasi lainnya.
+Mutasi digunakan untuk memindahkan stok barang dari satu lokasi ke lokasi lain. Formulir mencakup tanggal, nomor transaksi otomatis, barang, lokasi asal, lokasi tujuan, jumlah, dan keterangan opsional.
 
-Contoh:
-
-```text
-Dari:
-Gudang Utama
-
-Ke:
-Ruang Administrasi
-
-Barang:
-Kertas A4
-
-Jumlah:
-10 Rim
-```
-
-Sistem melakukan:
+Lokasi asal dan tujuan harus berbeda dan stok lokasi asal harus mencukupi. Sistem mengurangi stok pada lokasi asal dan menambahkan jumlah yang sama pada lokasi tujuan dalam satu transaksi.
 
 ```text
-Gudang Utama
-100 → 90
-
-Ruang Administrasi
-20 → 30
+Stok lokasi asal setelah mutasi   = stok sebelumnya - jumlah mutasi
+Stok lokasi tujuan setelah mutasi = stok sebelumnya + jumlah mutasi
 ```
 
-Setiap mutasi harus masuk ke riwayat.
+Mutasi tercatat sebagai transaksi dan dapat ditampilkan pada laporan mutasi.
 
 ---
 
 # 10. Penyesuaian Stok
 
-Admin dapat melakukan penyesuaian stok apabila jumlah fisik berbeda dengan jumlah yang tercatat dalam sistem.
-
-Contoh:
-
-```text
-Stok sistem : 20
-Stok fisik  : 18
-Selisih     : -2
-Alasan      : Hasil stock opname
-```
-
-Penyesuaian harus memiliki:
-
-* Tanggal
-* Barang
-* Lokasi
-* Stok sebelum
-* Stok sesudah
-* Selisih
-* Alasan
-* Admin
+Penyesuaian stok berdasarkan hasil stock opname belum tersedia sebagai fitur tersendiri pada aplikasi. Tidak ada formulir atau transaksi penyesuaian manual. Perubahan stok saat ini dilakukan melalui transaksi barang masuk, barang keluar, dan mutasi barang.
 
 ---
 
 # 11. Inventaris / Aset
 
-Inventaris menggunakan pencatatan individual.
+Inventaris dicatat secara individual. Pengelolaan tambah, ubah, dan hapus aset memerlukan izin mengelola aset; akses melihat aset diberikan secara terpisah.
 
-Data inventaris:
+Data inventaris meliputi:
 
-* Kode inventaris
+* Kode inventaris (unik)
 * Nama aset
 * Kategori
 * Merk
@@ -458,152 +278,101 @@ Data inventaris:
 * Foto
 * Keterangan
 
-Contoh:
-
-```text
-Kode Inventaris : INV-001
-Nama            : Laptop
-Merk            : Lenovo
-Model           : ThinkPad
-Nomor Seri      : XXXXX
-Tahun           : 2026
-Lokasi          : Ruang Tata Usaha
-Penanggung Jawab: Admin
-Kondisi         : Baik
-Status          : Digunakan
-```
+Daftar aset dapat dicari dan difilter menurut kategori, kondisi, status, lokasi, dan rentang tahun perolehan. Detail aset menampilkan informasi tersebut beserta riwayat aset dan riwayat mutasinya.
 
 ---
 
 # 12. Kondisi Inventaris
 
-Kondisi aset terdiri dari:
+Kondisi aset yang digunakan pada aplikasi:
 
 * Baik
 * Rusak Ringan
 * Rusak Berat
 
-Status aset dapat berupa:
+Kondisi dapat diperbarui oleh pengguna yang memiliki izin khusus. Perubahan dapat disertai unggahan foto kondisi dan dicatat dalam riwayat aset.
 
-* Digunakan
-* Tersimpan
-* Dipindahkan
-* Dalam Perbaikan
-* Tidak Digunakan
+Status aset dicatat pada data aset, terpisah dari kondisi. Contoh status yang digunakan meliputi Digunakan, Tersimpan, Dalam Perbaikan, dan Tidak Digunakan.
 
 ---
 
 # 13. Riwayat Inventaris
 
-Sistem mencatat perubahan penting pada aset.
+Halaman detail aset menampilkan riwayat pencatatan dan perubahan penting, seperti aset pertama kali dicatat, perubahan lokasi, kondisi, atau status. Riwayat mutasi aset disajikan terpisah dan mencakup lokasi asal dan tujuan, tanggal, penanggung jawab baru bila diisi, serta keterangan.
 
-Contoh:
-
-```text
-INV-001
-
-2026-08-01
-Lokasi: Ruang TU
-Kondisi: Baik
-
-2026-08-15
-Dipindahkan ke Ruang Pengawasan
-
-2026-08-18
-Kondisi berubah menjadi Rusak Ringan
-```
+Pencatatan mutasi aset mencakup pilihan aset, lokasi tujuan, tanggal, penanggung jawab baru (opsional), dan keterangan (opsional). Lokasi tujuan harus berbeda dari lokasi asal.
 
 ---
 
 # 14. Laporan
 
-Sistem menyediakan:
+Halaman laporan menyediakan pilihan jenis laporan, filter tahun serta rentang tanggal, visualisasi ringkasan data, dan tabel hasil.
+
+Jenis laporan yang tersedia:
 
 ### Laporan Persediaan
 
-Menampilkan:
-
-* Kode barang
-* Nama barang
-* Kategori
-* Total stok
-* Stok minimum
-* Status
+Menampilkan kode, nama barang, kategori, total stok, stok minimum, dan status.
 
 ### Laporan Barang Masuk
 
-Menampilkan seluruh transaksi barang masuk berdasarkan periode.
+Menampilkan transaksi masuk berdasarkan periode, termasuk nomor, tanggal, barang, jumlah, satuan, lokasi, sumber, nomor dokumen, dan petugas.
 
 ### Laporan Barang Keluar
 
-Menampilkan seluruh transaksi barang keluar berdasarkan periode.
+Menampilkan transaksi keluar berdasarkan periode, termasuk nomor, tanggal, barang, jumlah, satuan, lokasi, pengambil, keperluan, dan petugas atau sumber pencatatan.
 
 ### Laporan Mutasi
 
-Menampilkan perpindahan barang antar lokasi.
+Menampilkan transaksi perpindahan barang berdasarkan periode, termasuk barang, jumlah, lokasi asal dan tujuan, tanggal, serta petugas.
 
 ### Laporan Inventaris
 
-Menampilkan seluruh aset.
+Menampilkan kode, nama, kategori, merk, nomor seri, lokasi, penanggung jawab, kondisi, dan status aset.
 
 ### Laporan Berdasarkan Lokasi
 
-Menampilkan barang yang tersedia pada lokasi tertentu.
+Informasi stok barang dan aset pada lokasi tertentu tersedia pada halaman daftar dan detail lokasi. Laporan tersendiri dengan filter lokasi tidak tersedia sebagai jenis laporan ekspor.
 
 ### Laporan Stok Menipis
 
-Menampilkan barang yang mencapai batas minimum.
+Menampilkan barang dengan status menipis atau habis.
 
-Laporan dapat:
+Laporan dapat ditinjau pada halaman aplikasi dan difilter menurut jenis laporan serta tahun/rentang tanggal. Pengguna yang memiliki izin ekspor dapat:
 
-* Difilter
-* Dicari
-* Dicetak
-* Diekspor ke Excel
-* Diekspor ke PDF
+* Mengekspor laporan ke Excel.
+* Mengekspor laporan ke PDF.
+* Memilih kolom yang disertakan dalam PDF.
+* Memilih orientasi portrait atau landscape.
+* Mengisi nama, jabatan, dan NIP penandatangan pada PDF.
 
 ---
 
 # 15. Audit Trail
 
-Sistem menyimpan aktivitas admin.
+Aktivitas penting dicatat dan ditampilkan pada halaman Aktivitas bagi pengguna berizin. Catatan dapat memuat pengguna atau sumber aktivitas, deskripsi, waktu, dan data terkait. Halaman aktivitas mendukung pencarian deskripsi, pengurutan, dan paginasi.
 
-Contoh:
-
-```text
-Admin menambahkan barang baru
-Admin mencatat barang masuk
-Admin mencatat barang keluar
-Admin melakukan mutasi barang
-Admin mengubah data inventaris
-Admin melakukan penyesuaian stok
-```
-
-Data aktivitas:
-
-* User
-* Aktivitas
-* Waktu
-* Data terkait
+Aktivitas yang dicatat mencakup tindakan pada data barang, lokasi, aset, transaksi, dan ekspor laporan PDF. Dashboard juga menampilkan aktivitas terbaru bagi pengguna yang memiliki izin melihat aktivitas.
 
 ---
 
 # 16. Aturan Bisnis
 
-1. Barang persediaan dan inventaris/aset dikelola sebagai dua kategori pengelolaan yang berbeda.
-2. Satu jenis barang dapat berada di banyak lokasi.
-3. Stok persediaan dihitung berdasarkan lokasi.
-4. Barang keluar tidak memerlukan pengajuan.
-5. Barang keluar hanya dapat dicatat jika stok pada lokasi mencukupi.
-6. Setiap barang memiliki stok minimum.
-7. Sistem otomatis mendeteksi barang menipis.
-8. Stok habis ditandai sebagai status Habis.
-9. Pemindahan barang antar lokasi menggunakan transaksi mutasi.
-10. Setiap perubahan stok harus memiliki riwayat transaksi.
-11. Penyesuaian stok wajib memiliki alasan.
-12. Inventaris/aset memiliki kode inventaris unik.
-13. Inventaris dapat memiliki lokasi dan penanggung jawab.
-14. Admin dapat melihat seluruh data sistem.
+1. Persediaan dan aset merupakan dua jenis data yang dikelola melalui alur berbeda.
+2. Satu barang persediaan dapat memiliki stok pada beberapa lokasi.
+3. Total stok barang merupakan jumlah stok pada seluruh lokasi.
+4. Status stok dihitung dari total stok dan stok minimum: aman, menipis, atau habis.
+5. Barang keluar tidak memerlukan proses pengajuan atau persetujuan.
+6. Barang keluar hanya dapat dicatat apabila stok pada lokasi asal mencukupi.
+8. Mutasi barang mengurangi stok lokasi asal dan menambah stok lokasi tujuan dengan jumlah yang sama.
+9. Lokasi asal dan tujuan pada mutasi harus berbeda.
+10. Transaksi stok dicatat dengan nomor yang dibuat otomatis oleh sistem.
+11. Penyesuaian stok manual belum tersedia.
+12. Aset dicatat satu per satu dengan kode inventaris unik.
+13. Kondisi, status, lokasi, dan penanggung jawab aset dapat dipantau; perpindahan aset dicatat melalui mutasi aset.
+14. Perubahan kondisi aset memerlukan izin khusus.
+15. Akses menu dan tindakan ditentukan oleh izin pengguna, bukan hanya tampilan menu.
+16. Ekspor laporan, pengelolaan data, dan akses aktivitas hanya tersedia bagi pengguna dengan izin terkait.
 
 ---
 
@@ -611,46 +380,44 @@ Data aktivitas:
 
 ### Usability
 
-Antarmuka harus mudah digunakan oleh admin non-teknis.
+Antarmuka menggunakan bahasa Indonesia dan menyediakan navigasi, formulir, pencarian, filter, paginasi, serta indikator status agar mudah digunakan dalam kegiatan administrasi.
 
 ### Performance
 
-Dashboard dan tabel harus dapat memuat data secara cepat.
+Dashboard, daftar data, dan laporan perlu menampilkan informasi secara responsif. Daftar barang dan aset menggunakan paginasi untuk mendukung pengelolaan data.
 
 ### Security
 
-* Authentication
-* Authorization
-* Validasi input
-* CSRF protection
-* Password hashing
-* Audit trail
+* Autentikasi pengguna untuk area operasional.
+* Otorisasi berbasis peran dan izin pada menu maupun tindakan.
+* Validasi input transaksi dan data master.
+* Perlindungan CSRF dan penyimpanan kata sandi yang aman.
+* Pencatatan aktivitas penting.
 
 ### Responsive
 
-Sistem harus dapat digunakan pada:
-
-* Desktop
-* Laptop
-* Tablet
-* Mobile
+Antarmuka dirancang untuk digunakan pada desktop, laptop, tablet, dan perangkat mobile.
 
 ### Maintainability
 
-Struktur aplikasi harus mudah dikembangkan dan dipelihara.
+Modul persediaan, aset, lokasi, transaksi, laporan, autentikasi, dan pengguna dipisahkan agar aplikasi dapat dipelihara dan dikembangkan.
 
 ---
 
 # 18. Teknologi
 
-Teknologi yang direkomendasikan:
+Teknologi yang digunakan oleh aplikasi:
 
-* Backend: Laravel
-* Frontend: React
+* Backend: PHP dengan Laravel
+* Frontend: React dengan Inertia.js
 * Styling: Tailwind CSS
-* Database: MySQL
-* Authentication: Laravel Breeze / Laravel Sanctum sesuai kebutuhan
-* Export: Excel dan PDF
+* Build frontend: Vite
+* Database: konfigurasi basis data Laravel pada lingkungan deployment
+* Autentikasi dan otorisasi: autentikasi Laravel serta peran/izin
+* Pencatatan aktivitas: Laravel Activitylog
+* Ekspor Excel: Laravel Excel
+* Ekspor PDF: DomPDF
+* Grafik: Recharts
 * Version Control: Git
 
 ---
@@ -658,58 +425,63 @@ Teknologi yang direkomendasikan:
 # 19. Struktur Modul
 
 ```text
-SIGUDIN
+INVENTRA
+│
+├── Autentikasi
+│   ├── Masuk
+│   ├── Lupa dan atur ulang kata sandi dengan kode email
+│   └── Keluar
 │
 ├── Dashboard
+│   ├── Ringkasan persediaan, aset, dan lokasi
+│   ├── Grafik operasional
+│   ├── Peringatan stok
+│   └── Aktivitas terbaru (sesuai izin)
 │
-├── Master Data
-│   ├── Barang
-│   ├── Kategori
-│   ├── Satuan
-│   └── Lokasi
-│
-├── Persediaan
-│   ├── Stok
+├── Inventory
+│   ├── Data Barang
+│   ├── Persediaan per Lokasi
 │   ├── Barang Masuk
 │   ├── Barang Keluar
-│   ├── Mutasi
-│   └── Penyesuaian Stok
+│   └── Mutasi Barang
 │
-├── Inventaris
-│   ├── Data Inventaris
-│   ├── Kondisi
+├── Aset
+│   ├── Data dan Detail Inventaris
+│   ├── Kondisi dan Riwayat
 │   ├── Lokasi
-│   └── Riwayat
+│   └── Mutasi Aset
 │
 ├── Laporan
 │   ├── Persediaan
 │   ├── Barang Masuk
 │   ├── Barang Keluar
-│   ├── Mutasi
-│   └── Inventaris
+│   ├── Mutasi Barang
+│   ├── Inventaris
+│   └── Stok Menipis
 │
 └── Sistem
-    ├── Pengguna
+    ├── Pengguna dan Peran
     ├── Aktivitas
-    └── Pengaturan
+    └── Pengaturan Profil, Email, dan Kata Sandi
 ```
 
 ---
 
 # 20. Success Criteria
 
-SIGUDIN dianggap berhasil apabila:
+INVENTRA mendukung alur operasional yang tersedia apabila:
 
-* Admin dapat mengelola data barang.
-* Admin dapat mengelola banyak lokasi.
-* Stok dapat dihitung berdasarkan lokasi.
-* Barang masuk dapat dicatat.
-* Barang keluar dapat dicatat tanpa pengajuan.
-* Mutasi antar lokasi dapat dilakukan.
-* Sistem dapat mendeteksi stok menipis.
-* Sistem dapat mendeteksi stok habis.
-* Inventaris/aset dapat dicatat secara individual.
-* Kondisi dan lokasi aset dapat dipantau.
-* Riwayat transaksi dapat dilihat.
-* Laporan dapat dibuat dan diekspor.
-* Seluruh aktivitas penting dapat dilacak.
+* Pengguna dapat masuk dan mengakses fitur sesuai izin.
+* Pengguna dapat memulihkan kata sandi melalui kode verifikasi email.
+* Dashboard menampilkan ringkasan barang, stok, aset, lokasi, grafik, dan peringatan stok.
+* Pengguna berizin dapat mencari dan mengelola data barang.
+* Persediaan menampilkan jumlah per lokasi dan status stok berdasarkan stok minimum.
+* Barang masuk dan barang keluar dapat dicatat dengan nomor transaksi otomatis.
+* Barang keluar dapat dicatat oleh petugas yang memiliki izin melalui aplikasi.
+* Sistem menolak barang keluar yang melebihi stok pada lokasi asal.
+* Mutasi barang antar lokasi memperbarui stok pada kedua lokasi secara konsisten.
+* Pengguna berizin dapat mengelola lokasi dan melihat stok serta aset di lokasi tersebut.
+* Aset dapat dicatat secara individual, dilihat detailnya, diperbarui kondisinya, dan dimutasi antar lokasi.
+* Riwayat perubahan penting aset dan aktivitas operasional dapat ditinjau sesuai izin.
+* Laporan persediaan, transaksi, inventaris, dan stok menipis dapat ditinjau; pengguna berizin dapat mengekspor ke Excel dan PDF.
+* Profil, email, dan kata sandi dapat dikelola melalui pengaturan akun.

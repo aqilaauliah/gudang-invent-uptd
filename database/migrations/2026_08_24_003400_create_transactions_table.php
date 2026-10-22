@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('location_to_id')->nullable()->constrained('locations')->nullOnDelete();
             $table->integer('jumlah');
             $table->date('tanggal');
-            $table->string('dicatat_oleh'); // petugas | self-service
+            $table->string('dicatat_oleh'); // petugas
             $table->string('nama_petugas')->nullable();
             $table->string('nama_pengambil')->nullable();
             $table->string('sumber_supplier')->nullable();
