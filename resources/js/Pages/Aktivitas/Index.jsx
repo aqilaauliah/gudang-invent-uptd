@@ -194,10 +194,11 @@ function buildRows(activity) {
 
 export default function AktivitasIndex({ activities, filters }) {
     const [selected, setSelected] = useState(null);
+    const [searchValue, setSearchValue] = useState(filters.search ?? '');
 
     function search(e) {
-        if (e.key !== 'Enter') return;
-        router.get(route('aktivitas.index'), { search: e.target.value || undefined }, {
+        e.preventDefault();
+        router.get(route('aktivitas.index'), { search: searchValue || undefined }, {
             preserveState: true,
             replace: true,
         });
@@ -213,16 +214,19 @@ export default function AktivitasIndex({ activities, filters }) {
             <PageHeader title="Aktivitas" description="Riwayat seluruh aktivitas pada sistem (audit trail)." />
 
             <div className="mb-4 max-w-md">
-                <div className="relative">
+                <form onSubmit={search} className="relative">
                     <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
                     <input
                         type="text"
-                        defaultValue={filters.search}
-                        onKeyDown={search}
+                        value={searchValue}
+                        onChange={(e) => setSearchValue(e.target.value)}
                         placeholder="Cari aktivitas..."
-                        className="h-11 w-full rounded-btn border border-line bg-white pl-10 pr-3.5 text-sm focus:border-primary focus:outline-none"
+                        className="h-11 w-full rounded-btn border border-line bg-white pl-10 pr-24 text-sm focus:border-primary focus:outline-none"
                     />
-                </div>
+                    <button type="submit" className="absolute right-1.5 top-1/2 h-8 -translate-y-1/2 rounded-btn bg-primary px-3 text-xs font-medium text-white hover:bg-blue-700">
+                        Cari
+                    </button>
+                </form>
             </div>
 
             {activities.data.length === 0 ? (

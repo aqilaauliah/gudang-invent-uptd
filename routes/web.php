@@ -63,7 +63,8 @@ Route::middleware('auth')->group(function () {
         ->middleware('can:update-asset-condition')
         ->name('aset.condition.update');
     Route::middleware('can:manage-asset-mutations')->group(function () {
-        Route::get('/mutasi-aset', [AssetMutationController::class, 'index'])->name('aset.mutasi.index');
+        Route::get('/mutasi-aset', fn () => redirect()->route('aset.mutasi.create'))->name('aset.mutasi');
+        Route::get('/mutasi-aset/riwayat', [AssetMutationController::class, 'index'])->name('aset.mutasi.index');
         Route::get('/mutasi-aset/create', [AssetMutationController::class, 'create'])->name('aset.mutasi.create');
         Route::post('/mutasi-aset/{asset}', [AssetMutationController::class, 'store'])->name('aset.mutasi.store');
     });

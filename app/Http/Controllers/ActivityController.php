@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\Activitylog\Models\Activity;
@@ -11,6 +12,8 @@ use Spatie\QueryBuilder\QueryBuilder;
 
 class ActivityController extends Controller
 {
+    private const DISPLAY_TIMEZONE = 'Asia/Jakarta';
+
     public function index(Request $request): Response
     {
         $activities = QueryBuilder::for(Activity::class)
@@ -28,8 +31,8 @@ class ActivityController extends Controller
                 'id' => $activity->id,
                 'description' => $activity->description,
                 'causer' => $activity->causer?->name,
-                'time' => $activity->created_at?->diffForHumans(),
-                'created_at' => $activity->created_at?->format('d M Y H:i'),
+                'time' => $this->activityTime($activity)?->diffForHumans(),
+                'created_at' => $this->activityTime($activity)?->format('d M Y H:i'),
                 'properties' => $activity->properties->toArray(),
             ]);
 
@@ -37,5 +40,14 @@ class ActivityController extends Controller
             'activities' => $activities,
             'filters' => request()->only(['search']),
         ]);
+    }
+
+    private function activityTime(Activity $activity): ?Carbon
+    {
+        $createdAt = $activity->getRawOriginal('created_at');
+
+        return $createdAt
+            ? Carbon::parse($createdAt, 'UTC')->setTimezone(self::DISPLAY_TIMEZONE)
+            : null;
     }
 }

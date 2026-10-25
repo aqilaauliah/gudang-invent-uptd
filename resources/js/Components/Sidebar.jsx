@@ -38,7 +38,7 @@ const navigation = [
         items: [
             { label: 'Inventaris / Aset', href: '/aset', icon: MonitorSmartphone, match: '/aset', permission: 'view-assets' },
             { label: 'Lokasi', href: '/lokasi', icon: MapPin, match: '/lokasi', permission: 'view-locations' },
-            { label: 'Mutasi Aset', href: '/mutasi-aset', icon: AssetMove, match: '/mutasi-aset', permission: 'manage-asset-mutations' },
+            { label: 'Mutasi Aset', href: '/mutasi-aset/create', icon: AssetMove, match: '/mutasi-aset', permission: 'manage-asset-mutations' },
         ],
     },
     {
