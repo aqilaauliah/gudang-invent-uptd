@@ -196,8 +196,7 @@ export default function AktivitasIndex({ activities, filters }) {
     const [selected, setSelected] = useState(null);
     const [searchValue, setSearchValue] = useState(filters.search ?? '');
 
-    function search(e) {
-        e.preventDefault();
+    function search() {
         router.get(route('aktivitas.index'), { search: searchValue || undefined }, {
             preserveState: true,
             replace: true,
@@ -214,12 +213,19 @@ export default function AktivitasIndex({ activities, filters }) {
             <PageHeader title="Aktivitas" description="Riwayat seluruh aktivitas pada sistem (audit trail)." />
 
             <div className="mb-4 max-w-md">
-                <form onSubmit={search} className="relative">
+                <form onSubmit={(e) => { e.preventDefault(); search(); }} className="relative">
                     <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
                     <input
                         type="text"
                         value={searchValue}
-                        onChange={(e) => setSearchValue(e.target.value)}
+                        onChange={(e) => {
+                            const value = e.target.value;
+                            setSearchValue(value);
+                            router.get(route('aktivitas.index'), { search: value || undefined }, {
+                                preserveState: true,
+                                replace: true,
+                            });
+                        }}
                         placeholder="Cari aktivitas..."
                         className="h-11 w-full rounded-btn border border-line bg-white pl-10 pr-24 text-sm focus:border-primary focus:outline-none"
                     />

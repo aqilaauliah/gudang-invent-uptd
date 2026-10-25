@@ -9,7 +9,6 @@ use App\Models\Item;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
-use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class ItemController extends Controller
@@ -20,15 +19,18 @@ class ItemController extends Controller
     {
         $items = QueryBuilder::for(Item::class)
             ->with('stocks.location')
+            ->when(request()->filled('search'), function ($query) {
+                $search = request()->string('search');
+                $query->where(function ($q) use ($search) {
+                    $q->where('kode', 'like', "%{$search}%")
+                        ->orWhere('nama', 'like', "%{$search}%");
+                });
+            })
+            ->when(request()->filled('kategori'), fn ($query) => $query->where('kategori', request('kategori')))
+            ->when(request()->filled('status'), fn ($query) => $query->where('status', request('status')))
             ->allowedFilters(
                 'kategori',
                 'status',
-                AllowedFilter::callback('search', function ($query, $value) {
-                    $query->where(function ($q) use ($value) {
-                        $q->where('kode', 'like', "%{$value}%")
-                            ->orWhere('nama', 'like', "%{$value}%");
-                    });
-                }),
             )
             ->allowedSorts('kode', 'nama', 'kategori', 'stok_minimum')
             ->defaultSort('kode')

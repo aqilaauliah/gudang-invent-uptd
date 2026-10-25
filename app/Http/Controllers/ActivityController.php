@@ -18,6 +18,9 @@ class ActivityController extends Controller
     {
         $activities = QueryBuilder::for(Activity::class)
             ->with('causer')
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $query->where('description', 'like', '%'.$request->string('search').'%');
+            })
             ->allowedFilters(
                 AllowedFilter::callback('search', function ($query, $value) {
                     $query->where('description', 'like', "%{$value}%");

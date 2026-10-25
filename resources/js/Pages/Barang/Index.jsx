@@ -19,6 +19,7 @@ export default function BarangIndex({ items, filters, options }) {
     const [modalOpen, setModalOpen] = useState(false);
     const [editing, setEditing] = useState(null);
     const [deleting, setDeleting] = useState(null);
+    const [searchValue, setSearchValue] = useState(filters.search ?? '');
 
     const form = useForm({
         kode: '',
@@ -103,10 +104,12 @@ export default function BarangIndex({ items, filters, options }) {
                     <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
                     <input
                         type="text"
-                        defaultValue={filters.search}
+                        value={searchValue}
                         placeholder="Cari kode atau nama barang..."
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter') applyFilter('search', e.target.value);
+                        onChange={(e) => {
+                            const value = e.target.value;
+                            setSearchValue(value);
+                            applyFilter('search', value);
                         }}
                         className="h-11 w-full rounded-btn border border-line bg-white pl-10 pr-3.5 text-sm focus:border-primary focus:outline-none"
                     />
