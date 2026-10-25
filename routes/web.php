@@ -37,6 +37,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/persediaan', [PersediaanController::class, 'index'])
         ->middleware('can:view-stocks')
         ->name('persediaan.index');
+    Route::put('/persediaan/{item}', [PersediaanController::class, 'update'])
+        ->middleware('can:manage-stocks')
+        ->name('persediaan.update');
 
     Route::middleware('can:manage-transactions')->group(function () {
         Route::get('/barang-masuk', [BarangMasukController::class, 'create'])->name('barang-masuk.create');

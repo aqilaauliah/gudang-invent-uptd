@@ -2,13 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\FlashesMessages;
+use App\Http\Requests\UpdateStockRequest;
 use App\Models\Item;
+use App\Models\ItemLocationStock;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class PersediaanController extends Controller
 {
+    use FlashesMessages;
+
     public function index(Request $request): Response
     {
         $items = Item::with('stocks.location')
@@ -53,5 +60,45 @@ class PersediaanController extends Controller
             'filters' => $request->only(['tanggal_dari', 'tanggal_sampai']),
             'locations' => \App\Models\Location::orderBy('nama')->get(['id', 'nama']),
         ]);
+    }
+
+    public function update(UpdateStockRequest $request, Item $item): RedirectResponse
+    {
+        $data = $request->validated();
+
+        $stock = DB::transaction(function () use ($data, $item) {
+            $stock = ItemLocationStock::query()
+                ->lockForUpdate()
+                ->where('item_id', $item->id)
+                ->where('location_id', $data['location_id'])
+                ->first();
+
+            if (! $stock) {
+                $stock = ItemLocationStock::create([
+                    'item_id' => $item->id,
+                    'location_id' => $data['location_id'],
+                    'jumlah' => 0,
+                ]);
+            }
+
+            $stock->update(['jumlah' => $data['jumlah']]);
+
+            return $stock;
+        });
+
+        $this->flash('success', 'Persediaan berhasil diperbarui.');
+
+        activity()
+            ->causedBy($request->user())
+            ->withProperties([
+                'type' => 'koreksi_persediaan',
+                'item' => $item->nama,
+                'kode' => $item->kode,
+                'lokasi' => $stock->location?->nama,
+                'jumlah' => $stock->jumlah,
+            ])
+            ->log("Mengoreksi persediaan {$item->nama} ({$item->kode}) menjadi {$stock->jumlah} {$item->satuan}");
+
+        return redirect()->back();
     }
 }

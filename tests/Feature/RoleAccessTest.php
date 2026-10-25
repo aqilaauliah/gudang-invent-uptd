@@ -2,6 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Models\Item;
+use App\Models\ItemLocationStock;
+use App\Models\Location;
 use App\Models\User;
 use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -81,6 +84,70 @@ class RoleAccessTest extends TestCase
         $admin->assignRole('Admin');
 
         $this->actingAs($admin)->get('/aset/export/pdf')->assertNotFound();
+    }
+
+    public function test_admin_can_correct_stock_but_petugas_cannot(): void
+    {
+        $admin = User::factory()->create();
+        $admin->assignRole('Admin');
+        $petugas = User::factory()->create();
+        $petugas->assignRole('Petugas Gudang');
+        $item = Item::create([
+            'kode' => 'ATK-001',
+            'nama' => 'Kertas',
+            'kategori' => 'ATK',
+            'satuan' => 'Rim',
+            'stok_minimum' => 1,
+            'status' => 'aktif',
+        ]);
+        $location = Location::create(['nama' => 'Gudang Utama']);
+        ItemLocationStock::create([
+            'item_id' => $item->id,
+            'location_id' => $location->id,
+            'jumlah' => 10,
+        ]);
+
+        $this->actingAs($petugas)
+            ->put("/persediaan/{$item->id}", [
+                'location_id' => $location->id,
+                'jumlah' => 3,
+            ])
+            ->assertForbidden();
+
+        $this->actingAs($admin)
+            ->put("/persediaan/{$item->id}", [
+                'location_id' => $location->id,
+                'jumlah' => 3,
+            ])
+            ->assertRedirect()
+            ->assertSessionHas('flash_message', 'Persediaan berhasil diperbarui.');
+
+        $this->assertDatabaseHas('item_location_stocks', [
+            'item_id' => $item->id,
+            'location_id' => $location->id,
+            'jumlah' => 3,
+        ]);
+    }
+
+    public function test_stock_correction_rejects_negative_quantity(): void
+    {
+        $admin = User::factory()->create();
+        $admin->assignRole('Admin');
+        $item = Item::create([
+            'kode' => 'ATK-002',
+            'nama' => 'Pulpen',
+            'kategori' => 'ATK',
+            'satuan' => 'Box',
+            'status' => 'aktif',
+        ]);
+        $location = Location::create(['nama' => 'Gudang Sekunder']);
+
+        $this->actingAs($admin)
+            ->put("/persediaan/{$item->id}", [
+                'location_id' => $location->id,
+                'jumlah' => -1,
+            ])
+            ->assertSessionHasErrors('jumlah');
     }
 
 }

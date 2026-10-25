@@ -16,6 +16,7 @@ class RolePermissionSeeder extends Seeder
             'view-items',
             'manage-items',
             'view-stocks',
+            'manage-stocks',
             'manage-transactions',
             'view-assets',
             'manage-assets',

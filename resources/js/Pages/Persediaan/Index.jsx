@@ -1,13 +1,23 @@
 import { useMemo, useState } from 'react';
-import { Head, Link, router } from '@inertiajs/react';
-import { Search, MapPin, PackageCheck, PackageSearch, PackageX, Boxes } from 'lucide-react';
+import { Head, router, useForm, usePage } from '@inertiajs/react';
+import { Search, MapPin, PackageCheck, PackageSearch, PackageX, Boxes, Pencil } from 'lucide-react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import PageHeader from '@/Components/PageHeader';
 import Card from '@/Components/Card';
+import Button from '@/Components/Button';
+import FormInput from '@/Components/FormInput';
+import Modal from '@/Components/Modal';
 import { StatusBadge } from '@/Components/StatusBadge';
 import EmptyState from '@/Components/EmptyState';
 
 export default function PersediaanIndex({ items, summary, locations, filters = {} }) {
+    const { auth } = usePage().props;
+    const canManageStocks = auth?.permissions?.includes('manage-stocks');
+    const [editingItem, setEditingItem] = useState(null);
+    const { data, setData, put, processing, errors, reset, clearErrors } = useForm({
+        location_id: '',
+        jumlah: '',
+    });
     const [search, setSearch] = useState('');
     const [kategori, setKategori] = useState('');
     const [lokasi, setLokasi] = useState('');
@@ -34,6 +44,30 @@ export default function PersediaanIndex({ items, summary, locations, filters = {
     function applyDates(key, value) {
         const next = { ...filters, [key]: value || undefined };
         router.get(route('persediaan.index'), next, { preserveState: true, replace: true });
+    }
+
+    function openEdit(item) {
+        const stock = item.stocks[0];
+        setEditingItem(item);
+        clearErrors();
+        setData({
+            location_id: stock?.location_id ?? locations[0]?.id ?? '',
+            jumlah: stock?.jumlah ?? 0,
+        });
+    }
+
+    function closeEdit() {
+        setEditingItem(null);
+        reset();
+        clearErrors();
+    }
+
+    function submitEdit(e) {
+        e.preventDefault();
+        put(route('persediaan.update', editingItem.id), {
+            preserveScroll: true,
+            onSuccess: closeEdit,
+        });
     }
 
     const summaryCards = [
@@ -115,6 +149,7 @@ export default function PersediaanIndex({ items, summary, locations, filters = {
                                     <th className="px-5 py-3.5 text-right font-semibold">Stok</th>
                                     <th className="px-5 py-3.5 text-right font-semibold">Minimum</th>
                                     <th className="px-5 py-3.5 font-semibold">Status</th>
+                                    {canManageStocks && <th className="px-5 py-3.5 text-right font-semibold">Aksi</th>}
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-line">
@@ -138,6 +173,14 @@ export default function PersediaanIndex({ items, summary, locations, filters = {
                                         </td>
                                         <td className="px-5 py-3.5 text-right text-muted">{item.stok_minimum}</td>
                                         <td className="px-5 py-3.5"><StatusBadge status={item.stok_status} /></td>
+                                        {canManageStocks && (
+                                            <td className="px-5 py-3.5 text-right">
+                                                <Button type="button" variant="soft" size="sm" onClick={() => openEdit(item)}>
+                                                    <Pencil className="h-3.5 w-3.5" />
+                                                    Edit
+                                                </Button>
+                                            </td>
+                                        )}
                                     </tr>
                                 ))}
                             </tbody>
@@ -167,11 +210,59 @@ export default function PersediaanIndex({ items, summary, locations, filters = {
                                     Total: <span className="font-semibold text-ink">{item.total_stock} {item.satuan}</span>
                                     {' '}· Min: {item.stok_minimum}
                                 </p>
+                                {canManageStocks && (
+                                    <Button type="button" variant="soft" size="sm" className="mt-3 w-full" onClick={() => openEdit(item)}>
+                                        <Pencil className="h-3.5 w-3.5" />
+                                        Edit Persediaan
+                                    </Button>
+                                )}
                             </div>
                         ))}
                     </div>
                 </>
             )}
+
+            <Modal
+                open={Boolean(editingItem)}
+                onClose={closeEdit}
+                title={`Edit Persediaan${editingItem ? ` - ${editingItem.nama}` : ''}`}
+            >
+                <form onSubmit={submitEdit} className="space-y-4">
+                    <p className="text-sm text-muted">
+                        Koreksi jumlah stok di lokasi terpilih. Perubahan ini tidak mengubah riwayat transaksi.
+                    </p>
+                    <div>
+                        <label htmlFor="location_id" className="mb-1.5 block text-sm font-medium text-ink">Lokasi</label>
+                        <select
+                            id="location_id"
+                            value={data.location_id}
+                            onChange={(e) => {
+                                const stock = editingItem?.stocks.find((s) => String(s.location_id) === e.target.value);
+                                setData({ location_id: e.target.value, jumlah: stock?.jumlah ?? 0 });
+                            }}
+                            className={`h-11 w-full rounded-btn border bg-white px-3.5 text-sm focus:outline-none ${errors.location_id ? 'border-danger' : 'border-line focus:border-primary'}`}
+                        >
+                            {locations.map((location) => (
+                                <option key={location.id} value={location.id}>{location.nama}</option>
+                            ))}
+                        </select>
+                        {errors.location_id && <p className="mt-1.5 text-xs text-danger">{errors.location_id}</p>}
+                    </div>
+                    <FormInput
+                        label={`Jumlah Stok${editingItem ? ` (${editingItem.satuan})` : ''}`}
+                        name="jumlah"
+                        type="number"
+                        min="0"
+                        value={data.jumlah}
+                        onChange={(e) => setData('jumlah', e.target.value)}
+                        error={errors.jumlah}
+                    />
+                    <div className="flex justify-end gap-2">
+                        <Button type="button" variant="secondary" onClick={closeEdit}>Batal</Button>
+                        <Button type="submit" disabled={processing}>Simpan Perubahan</Button>
+                    </div>
+                </form>
+            </Modal>
         </AuthenticatedLayout>
     );
 }
