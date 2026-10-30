@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Head, router } from '@inertiajs/react';
 import { Search, History, ChevronRight } from 'lucide-react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
@@ -195,10 +195,37 @@ function buildRows(activity) {
 export default function AktivitasIndex({ activities, filters }) {
     const [selected, setSelected] = useState(null);
     const [searchValue, setSearchValue] = useState(filters.search ?? '');
+    const [dateFrom, setDateFrom] = useState(filters.date_from ?? '');
+    const [dateTo, setDateTo] = useState(filters.date_to ?? '');
+    const [type, setType] = useState(filters.type ?? '');
 
-    function search() {
-        router.get(route('aktivitas.index'), { search: searchValue || undefined }, {
+    useEffect(() => {
+        setSearchValue(filters.search ?? '');
+        setDateFrom(filters.date_from ?? '');
+        setDateTo(filters.date_to ?? '');
+        setType(filters.type ?? '');
+    }, [filters.search, filters.date_from, filters.date_to, filters.type]);
+
+    function applyFilters(event) {
+        event.preventDefault();
+        router.get(route('aktivitas.index'), {
+            search: searchValue || undefined,
+            date_from: dateFrom || undefined,
+            date_to: dateTo || undefined,
+            type: type || undefined,
+        }, {
             preserveState: true,
+            replace: true,
+        });
+    }
+
+    function resetFilters() {
+        setSearchValue('');
+        setDateFrom('');
+        setDateTo('');
+        setType('');
+        router.get(route('aktivitas.index'), {}, {
+            preserveScroll: true,
             replace: true,
         });
     }
@@ -212,28 +239,50 @@ export default function AktivitasIndex({ activities, filters }) {
 
             <PageHeader title="Aktivitas" description="Riwayat seluruh aktivitas pada sistem (audit trail)." />
 
-            <div className="mb-4 max-w-md">
-                <form onSubmit={(e) => { e.preventDefault(); search(); }} className="relative">
+            <form onSubmit={applyFilters} className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-6">
+                <div className="relative lg:col-span-2">
                     <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
                     <input
                         type="text"
                         value={searchValue}
-                        onChange={(e) => {
-                            const value = e.target.value;
-                            setSearchValue(value);
-                            router.get(route('aktivitas.index'), { search: value || undefined }, {
-                                preserveState: true,
-                                replace: true,
-                            });
-                        }}
-                        placeholder="Cari aktivitas..."
-                        className="h-11 w-full rounded-btn border border-line bg-white pl-10 pr-24 text-sm focus:border-primary focus:outline-none"
+                        onChange={(e) => setSearchValue(e.target.value)}
+                        placeholder="Cari aktivitas atau nama pengguna..."
+                        aria-label="Cari aktivitas atau nama pengguna"
+                        className="h-11 w-full rounded-btn border border-line bg-white pl-10 pr-3.5 text-sm focus:border-primary focus:outline-none"
                     />
-                    <button type="submit" className="absolute right-1.5 top-1/2 h-8 -translate-y-1/2 rounded-btn bg-primary px-3 text-xs font-medium text-white hover:bg-blue-700">
-                        Cari
-                    </button>
-                </form>
-            </div>
+                </div>
+                <input
+                    type="date"
+                    value={dateFrom}
+                    onChange={(e) => setDateFrom(e.target.value)}
+                    aria-label="Tanggal dari"
+                    className="h-11 rounded-btn border border-line bg-white px-3.5 text-sm focus:border-primary focus:outline-none"
+                />
+                <input
+                    type="date"
+                    value={dateTo}
+                    onChange={(e) => setDateTo(e.target.value)}
+                    aria-label="Sampai tanggal"
+                    className="h-11 rounded-btn border border-line bg-white px-3.5 text-sm focus:border-primary focus:outline-none"
+                />
+                <select
+                    value={type}
+                    onChange={(e) => setType(e.target.value)}
+                    aria-label="Jenis aktivitas"
+                    className="h-11 rounded-btn border border-line bg-white px-3.5 text-sm focus:border-primary focus:outline-none"
+                >
+                    <option value="">Semua Jenis Aktivitas</option>
+                    {Object.entries(TYPE_META).map(([value, meta]) => (
+                        <option key={value} value={value}>{meta.label}</option>
+                    ))}
+                </select>
+                <button type="submit" className="h-11 rounded-btn bg-primary px-3.5 text-sm font-medium text-white hover:bg-blue-700">
+                    Terapkan Filter
+                </button>
+                <button type="button" onClick={resetFilters} className="h-11 rounded-btn border border-line bg-white px-3.5 text-sm font-medium text-muted hover:bg-surface">
+                    Reset Filter
+                </button>
+            </form>
 
             {activities.data.length === 0 ? (
                 <EmptyState description="Belum ada aktivitas yang tercatat." />
